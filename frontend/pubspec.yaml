@@ -1,0 +1,62 @@
+name: ai_travel_planner
+description: AI旅行规划师 - Flutter Web前端应用
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 状态管理
+  flutter_riverpod: ^2.4.0
+
+  # HTTP客户端
+  http: ^1.1.0
+
+  # 路由管理
+  go_router: ^12.1.0
+
+  # 本地存储
+  shared_preferences: ^2.2.2
+
+  # JSON序列化
+  json_annotation: ^4.8.1
+
+  # UI组件
+  cupertino_icons: ^1.0.2
+  material_color_utilities: ^0.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+
+  # JSON序列化生成器
+  build_runner: ^2.4.6
+  json_serializable: ^6.7.1
+
+flutter:
+  uses-material-design: true
+
+  # 字体配置
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
+        - asset: fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: fonts/Roboto-Bold.ttf
+          weight: 700
+
+  # Web配置
+  web:
+    renderer: html
+    title: AI旅行规划师
+
+  # 生成配置
+  generate: true
