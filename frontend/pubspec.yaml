@@ -28,7 +28,7 @@ dependencies:
 
   # UI组件
   cupertino_icons: ^1.0.2
-  material_color_utilities: ^0.2.0
+  material_color_utilities: ^0.8.0
 
 dev_dependencies:
   flutter_test:
@@ -54,9 +54,9 @@ flutter:
           weight: 700
 
   # Web配置
-  web:
-    renderer: html
-    title: AI旅行规划师
+  # web:
+  #   renderer: html
+  #   title: AI旅行规划师
 
   # 生成配置
-  generate: true
+  # generate: true
