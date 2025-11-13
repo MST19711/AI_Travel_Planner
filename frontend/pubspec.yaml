@@ -26,6 +26,14 @@ dependencies:
   # JSON序列化
   json_annotation: ^4.8.1
 
+  # 加密工具
+  encrypt: ^5.0.1
+  crypto: ^3.0.3
+  
+  # SRP认证库
+  dsrp: ^0.5.4
+  
+
   # UI组件
   cupertino_icons: ^1.0.2
   material_color_utilities: ^0.8.0

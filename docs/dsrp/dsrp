@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="https://www.googletagmanager.com/gtm.js?id=GTM-MX6DBN9" async="async"></script><script src="/static/hash-biviks7u/js/gtm.js" async="async"></script><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="twitter:card" content="summary"/><meta name="twitter:site" content="@dart_lang"/><meta name="twitter:description" content="Secure Remote Password (SRP-6a) for zero-knowledge authentication without transmitting password-equivalents."/><meta name="twitter:image" content="https://pub.dev/static/hash-biviks7u/img/pub-dev-icon-cover-image.png"/><meta property="og:type" content="website"/><meta property="og:site_name" content="Dart packages"/><meta property="og:title" content="dsrp | Dart package"/><meta property="og:description" content="Secure Remote Password (SRP-6a) for zero-knowledge authentication without transmitting password-equivalents."/><meta property="og:image" content="https://pub.dev/static/hash-biviks7u/img/pub-dev-icon-cover-image.png"/><meta property="og:url" content="https://pub.dev/packages/dsrp"/><title>dsrp | Dart package</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Google+Sans+Display:wght@400&amp;family=Google+Sans+Text:wght@400;500;700&amp;family=Google+Sans+Mono:wght@400;700&amp;display=swap"/><link rel="shortcut icon" href="/favicon.ico?hash=nk4nss8c7444fg0chird9erqef2vkhb8"/><meta rel="apple-touch-icon" href="/static/hash-biviks7u/img/apple-touch-icon.png"/><meta rel="apple-touch-icon-precomposed" href="/static/hash-biviks7u/img/apple-touch-icon.png"/><link rel="stylesheet" href="https://www.gstatic.com/glue/v25_0/ccb.min.css"/><link rel="search" type="application/opensearchdescription+xml" title="Dart packages" href="/osd.xml"/><link rel="canonical" href="https://pub.dev/packages/dsrp"/><meta name="description" content="Secure Remote Password (SRP-6a) for zero-knowledge authentication without transmitting password-equivalents."/><link rel="alternate" type="application/atom+xml" title="Recently published packages on pub.dev" href="/feed.atom"/><link rel="alternate" type="application/atom+xml" title="Recently published versions of package dsrp on pub.dev" href="/api/packages/dsrp/feed.atom"/><link rel="stylesheet" type="text/css" href="/static/hash-biviks7u/material/bundle/styles.css"/><link rel="stylesheet" type="text/css" href="/static/hash-biviks7u/css/style.css"/><script src="/static/hash-biviks7u/material/bundle/script.min.js" defer="defer"></script><script src="/static/hash-biviks7u/js/script.dart.js" defer="defer"></script><script src="https://www.gstatic.com/brandstudio/kato/cookie_choice_component/cookie_consent_bar.v3.js" defer="defer" data-autoload-cookie-consent-bar="true"></script><meta name="pub-page-data" content="eyJwa2dEYXRhIjp7InBhY2thZ2UiOiJkc3JwIiwidmVyc2lvbiI6IjAuNS40IiwicHVibGlzaGVySWQiOiJmaWN0aW9udG9yZWFsaXR5LmRldiIsImlzRGlzY29udGludWVkIjpmYWxzZSwiaXNMYXRlc3QiOnRydWV9LCJzZXNzaW9uQXdhcmUiOmZhbHNlfQ=="/><link rel="preload" href="/static/hash-biviks7u/highlight/highlight-with-init.js" as="script"/></head><body class="light-theme"><script src="/static/hash-biviks7u/js/dark-init.js"></script><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MX6DBN9" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><div class="site-header"><button class="hamburger" aria-label="menu toggle"></button><a class="logo" href="/" aria-label="Go to the landing page of pub.dev"><img class="site-logo" src="/static/hash-biviks7u/img/pub-dev-logo.svg" alt="" width="140" height="30" role="presentation"/></a><div class="site-header-space"></div><div class="site-header-mask"></div><div class="site-header-search"><form action="/packages" method="GET"><input class="site-header-search-input" name="q" placeholder="New search..." autocomplete="on" title="Search"/></form></div><nav class="site-header-nav scroll-container"><div class="nav-login-container"><button id="-account-login" class="nav-main-button link">Sign in</button></div><div class="nav-container nav-help-container hoverable"><button class="nav-main-button">Help</button><div class="nav-hover-popup"><div class="nav-table-columns"><div class="nav-table-column"><h3>pub.dev</h3><a class="nav-link" href="/help/search" rel="noopener" target="_blank">Searching for packages</a><a class="nav-link" href="/help/scoring" rel="noopener" target="_blank">Package scoring and pub points</a></div><div class="nav-table-column"><h3>Flutter</h3><a class="nav-link" href="https://flutter.dev/using-packages/" rel="noopener" target="_blank">Using packages</a><a class="nav-link" href="https://flutter.dev/developing-packages/" rel="noopener" target="_blank">Developing packages and plugins</a><a class="nav-link" href="https://dart.dev/tools/pub/publishing" rel="noopener" target="_blank">Publishing a package</a></div><div class="nav-table-column"><h3>Dart</h3><a class="nav-link" href="https://dart.dev/guides/packages" rel="noopener" target="_blank">Using packages</a><a class="nav-link" href="https://dart.dev/tools/pub/publishing" rel="noopener" target="_blank">Publishing a package</a></div></div></div></div><div class="nav-container nav-help-container-mobile foldable"><h3 class="foldable-button">pub.dev <img class="foldable-icon" src="/static/hash-biviks7u/img/nav-mobile-foldable-icon.svg" alt="toggle folding of the section" width="13" height="6"/></h3><div class="foldable-content"><a class="nav-link" href="/help/search" rel="noopener" target="_blank">Searching for packages</a><a class="nav-link" href="/help/scoring" rel="noopener" target="_blank">Package scoring and pub points</a></div></div><div class="nav-container nav-help-container-mobile foldable"><h3 class="foldable-button">Flutter <img class="foldable-icon" src="/static/hash-biviks7u/img/nav-mobile-foldable-icon.svg" alt="toggle folding of the section" width="13" height="6"/></h3><div class="foldable-content"><a class="nav-link" href="https://flutter.dev/using-packages/" rel="noopener" target="_blank">Using packages</a><a class="nav-link" href="https://flutter.dev/developing-packages/" rel="noopener" target="_blank">Developing packages and plugins</a><a class="nav-link" href="https://dart.dev/tools/pub/publishing" rel="noopener" target="_blank">Publishing a package</a></div></div><div class="nav-container nav-help-container-mobile foldable"><h3 class="foldable-button">Dart <img class="foldable-icon" src="/static/hash-biviks7u/img/nav-mobile-foldable-icon.svg" alt="toggle folding of the section" width="13" height="6"/></h3><div class="foldable-content"><a class="nav-link" href="https://dart.dev/guides/packages" rel="noopener" target="_blank">Using packages</a><a class="nav-link" href="https://dart.dev/tools/pub/publishing" rel="noopener" target="_blank">Publishing a package</a></div></div></nav><button class="-pub-theme-toggle" aria-label="light/dark theme toggle"></button></div><div id="banner-container"></div><main class="container"><div class="detail-wrapper -active -has-info-box"><div class="detail-header -is-loose"><div class="detail-container"><div class="detail-header-outer-block"><div class="detail-header-content-block"><h1 class="title pub-monochrome-icon-hoverable">dsrp 0.5.4 <span class="pkg-page-title-copy"><img class="pub-monochrome-icon pkg-page-title-copy-icon filter-invert-on-dark" src="/static/hash-biviks7u/img/content-copy-icon.svg" alt="copy &quot;dsrp: ^0.5.4&quot; to clipboard" width="18" height="18" title="Copy &quot;dsrp: ^0.5.4&quot; to clipboard" data-copy-content="dsrp: ^0.5.4" data-ga-click-event="copy-package-version"/><div class="pkg-page-title-copy-feedback"><span class="code">dsrp: ^0.5.4</span> copied to clipboard</div></span></h1><div class="metadata">Published <span><a class="-x-ago" href="" title="Oct 14, 2025" role="button" data-timestamp="1760404544263">30 days ago</a></span> • <a class="-pub-publisher" href="/publishers/fictiontoreality.dev"><img class="-pub-publisher-shield filter-invert-on-dark" src="/static/hash-biviks7u/img/material-icon-verified.svg" alt="verified publisher" width="14" height="14" title="Published by a pub.dev verified publisher"/>fictiontoreality.dev</a></div><div class="detail-tags-and-like"><div class="detail-tags"><div class="-pub-tag-badge"><span class="tag-badge-main">SDK</span><a class="tag-badge-sub" href="/packages?q=sdk%3Adart" rel="nofollow" title="Packages compatible with Dart SDK">Dart</a><a class="tag-badge-sub" href="/packages?q=sdk%3Aflutter" rel="nofollow" title="Packages compatible with Flutter SDK">Flutter</a></div><div class="-pub-tag-badge"><span class="tag-badge-main">Platform</span><a class="tag-badge-sub" href="/packages?q=platform%3Aandroid" rel="nofollow" title="Packages compatible with Android platform">Android</a><a class="tag-badge-sub" href="/packages?q=platform%3Aios" rel="nofollow" title="Packages compatible with iOS platform">iOS</a><a class="tag-badge-sub" href="/packages?q=platform%3Alinux" rel="nofollow" title="Packages compatible with Linux platform">Linux</a><a class="tag-badge-sub" href="/packages?q=platform%3Amacos" rel="nofollow" title="Packages compatible with macOS platform">macOS</a><a class="tag-badge-sub" href="/packages?q=platform%3Aweb" rel="nofollow" title="Packages compatible with Web platform">web</a><a class="tag-badge-sub" href="/packages?q=platform%3Awindows" rel="nofollow" title="Packages compatible with Windows platform">Windows</a></div></div><div class="like-button-and-label"><button class="mdc-icon-button like-button-and-label--button" data-ga-click-event="toggle-like" aria-pressed="false" data-package="dsrp" data-value="1" title="Like this package"><img class="mdc-icon-button__icon" src="/static/hash-biviks7u/img/like-inactive.svg" alt="liked status: inactive" width="18" height="18"/><img class="mdc-icon-button__icon mdc-icon-button__icon--on" src="/static/hash-biviks7u/img/like-active.svg" alt="liked status: active" width="18" height="18"/></button><span class="like-button-and-label--count-wrapper"><span class="like-button-and-label--count">1</span></span></div></div></div></div></div></div><div class="detail-container"><div class="detail-lead"><div class="detail-metadata-toggle"><div class="detail-metadata-toggle-icon">→</div><h3 class="detail-lead-title">Metadata</h3></div><p class="detail-lead-text">Secure Remote Password (SRP-6a) for zero-knowledge authentication without transmitting password-equivalents.</p><p class="detail-lead-more"><a class="detail-metadata-toggle">More...</a></p></div></div><div class="detail-body"><div class="detail-tabs"><div class="detail-tabs-wide-header"><div class="detail-container"><ul class="detail-tabs-header"><li class="detail-tab tab-button detail-tab-readme-title -active">Readme</li><li class="detail-tab tab-link detail-tab-changelog-title"><a href="/packages/dsrp/changelog" role="button">Changelog</a></li><li class="detail-tab tab-link detail-tab-example-title"><a href="/packages/dsrp/example" role="button">Example</a></li><li class="detail-tab tab-link detail-tab-installing-title"><a href="/packages/dsrp/install" role="button">Installing</a></li><li class="detail-tab tab-link detail-tab-versions-title"><a href="/packages/dsrp/versions" role="button">Versions</a></li><li class="detail-tab tab-link detail-tab-analysis-title"><a href="/packages/dsrp/score" role="button">Scores</a></li></ul></div></div><div class="detail-container detail-body-main"><div class="detail-tabs-content"><section class="tab-content detail-tab-readme-content -active markdown-body"><h1 id="dsrp" class="hash-header">dsrp <a href="#dsrp" class="hash-link">#</a></h1>
+<p><a href="https://pub.dev/packages/dsrp"><img src="https://img.shields.io/pub/v/dsrp.svg" alt="pub package"></a>
+<a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/main/LICENSE" rel="ugc"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License"></a></p>
+<p><strong>dsrp</strong> is a pure-Dart implementation of the <a href="https://en.wikipedia.org/wiki/Secure_Remote_Password_protocol" rel="ugc">Secure Remote Password (SRP-6a)</a> protocol for secure user authentication, compatible with all Dart and Flutter platforms.</p>
+<p>SRP allows password-based authentication without transmitting password-equivalent information to the server, protecting against man-in-the-middle attacks and server database breaches.</p>
+<h2 id="table-of-contents" class="hash-header">Table of Contents <a href="#table-of-contents" class="hash-link">#</a></h2>
+<ul>
+<li><a href="#features">Features</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#advanced-usage">Advanced Usage</a></li>
+<li><a href="#security-best-practices">Security Best Practices</a></li>
+<li><a href="#performance-and-profiling">Performance and Profiling</a></li>
+<li><a href="#additional-resources">Additional Resources</a></li>
+<li><a href="#contributions">Contributions</a></li>
+<li><a href="#license">License</a></li>
+</ul>
+<h2 id="features" class="hash-header">Features <a href="#features" class="hash-link">#</a></h2>
+<ul>
+<li><strong>Zero-knowledge password proof</strong> - Server never receives password or password-equivalent data.</li>
+<li><strong>Pure Dart</strong> - Works on all Dart platforms (Flutter mobile, web, desktop, and server).</li>
+<li><strong>Mutual authentication</strong> - Both client and server verify each other's identity.</li>
+<li><strong>Secure session keys</strong> - Generates shared symmetric keys for encrypted communication to optionally supplement other encryption layers such as TLS.</li>
+<li><strong>RFC5054 compliant</strong> - compatible with SRP-6a, the most widely adopted standard for SRP.</li>
+<li><strong>Customizable cryptography</strong> - Built-in support for multiple hash functions (SHA256, SHA512, SHA1) and KDFs (Argon2id, PBKDF2), or bring your own custom functions tailored to your use case.</li>
+<li><strong>Custom safe primes</strong> - Generate your own primes to reduce vulnerability to pre-computed attacks.</li>
+<li><strong>Memory security</strong> - Uses <code>Uint8List</code> for passwords with secure erasure via <code>overwriteWithZeros()</code>.</li>
+<li><strong>Python interoperability</strong> - Fully compatible with <a href="https://github.com/cocagne/pysrp" rel="ugc">pysrp</a> library.</li>
+</ul>
+<h3 id="platform-support" class="hash-header">Platform Support <a href="#platform-support" class="hash-link">#</a></h3>
+<ul>
+<li>✅ Flutter (Android, iOS, Desktop, Web)</li>
+<li>✅ All Dart platforms</li>
+</ul>
+<h2 id="installation" class="hash-header">Installation <a href="#installation" class="hash-link">#</a></h2>
+<p>Add <code>dsrp</code> to your <code>pubspec.yaml</code>:</p>
+<pre><code class="language-yaml">dependencies:
+  dsrp: ^0.5.4
+</code></pre>
+<p>Then run:</p>
+<pre><code class="language-bash">dart pub get
+</code></pre>
+<p>If using with Flutter, you can add the <a href="https://github.com/dint-dev/cryptography/tree/master/cryptography_flutter" rel="ugc"><code>cryptography_flutter</code> package</a> for platform-specific performance optimizations:</p>
+<pre><code>dependencies:
+  cryptography_flutter: ^2.3.2
+</code></pre>
+<h2 id="usage" class="hash-header">Usage <a href="#usage" class="hash-link">#</a></h2>
+<p>SRP authentication consists of two phases, registration and authentication:</p>
+<pre><code>Client                            Server
+   |                                 |
+   | --- 1. Registration ----------&gt; | (stores salt + verifier)
+   |                                 |
+   | &lt;-- 2a. Challenge ------------- | (ephemeral key B)
+   |                                 |
+   | --- 2b. User Proof -----------&gt; | (ephemeral key A + M1)
+   |                                 |
+   | &lt;-- 2c. Server Proof ---------- | (M2)
+   |                                 |
+   | === Mutual Authentication ===== | (shared session key)
+</code></pre>
+<h3 id="1-registration-phase" class="hash-header">1. Registration Phase <a href="#1-registration-phase" class="hash-link">#</a></h3>
+<p>The user creates a salted verification key from their credentials and sends it to the server for storage:</p>
+<pre><code class="language-dart">import 'package:dsrp/dsrp.dart';
+
+// User creates salted verification key from password
+final saltedVerificationKey = await User.createSaltedVerificationKey(
+  userId: 'alice',
+  password: 'secure-password-123',
+);
+
+// Send saltedVerificationKey.key and saltedVerificationKey.salt to server.
+// Server stores these for future authentication.
+</code></pre>
+<h3 id="2-authentication-phase" class="hash-header">2. Authentication Phase <a href="#2-authentication-phase" class="hash-link">#</a></h3>
+<p>The user and server mutually authenticate and derive a shared session key, all
+without the user ever sending their password to the server:</p>
+<pre><code class="language-dart">// 1. User requests challenge from server (sends userId).
+final server = Server(
+  userId: 'alice',
+  salt: saltedVerificationKey.salt,        // Retrieved from database
+  verifierKey: saltedVerificationKey.key,  // Retrieved from database
+);
+final challenge = await server.createChallenge();
+
+// 2. User processes challenge and generates session verifiers.
+final user = await User.fromUserCredsAndChallenge(
+  userId: 'alice',
+  password: 'secure-password-123',
+  challenge: challenge,
+);
+final userSessionVerifiers = user.getUserSessionVerifiers();
+
+// 3. Server verifies user and generates server verifier.
+final serverSessionKeyVerifier = await server.verifySession(
+  ephemeralUserPublicKey: userSessionVerifiers.ephemeralUserPublicKey,
+  userSessionKeyVerifier: userSessionVerifiers.sessionKeyVerifier,
+);
+
+// 4. User verifies server (throws exception if verification fails).
+await user.verifySession(serverSessionKeyVerifier);
+
+// 5. Both parties now have identical symmetric session keys for encrypted communication.
+final userSessionKey = user.sessionKey;
+final serverSessionKey = server.sessionKey;
+// userSessionKey == serverSessionKey
+</code></pre>
+<p><strong>Note</strong>: Session keys supplement but do not replace TLS encryption. Always use TLS for transport security.</p>
+<p>A complete working example is in <a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/dev/example/dsrp.dart" rel="ugc">example/dsrp.dart</a>:</p>
+<pre><code>dart example/dsrp.dart
+</code></pre>
+<h2 id="advanced-usage" class="hash-header">Advanced Usage <a href="#advanced-usage" class="hash-link">#</a></h2>
+<h3 id="custom-hash-functions-and-kdfs" class="hash-header">Custom Hash Functions and KDFs <a href="#custom-hash-functions-and-kdfs" class="hash-link">#</a></h3>
+<p>If the built-in hash functions or KDFs do not meet your needs, you can provide your own by implementing the <code>HashFunction</code> and <code>Kdf</code> interfaces:</p>
+<pre><code class="language-dart">import 'dart:typed_data';
+import 'package:dsrp/dsrp.dart';
+import 'package:dsrp/crypto/hash.dart';
+import 'package:dsrp/crypto/kdf.dart';
+
+// Custom hash function example
+class CustomBlake3Hash implements HashFunction {
+  @override
+  String get name =&gt; 'blake3';
+
+  @override
+  Future&lt;Uint8List&gt; hash(Uint8List input) async {
+    // Your custom hash implementation.
+    // ...
+  }
+}
+
+// Custom KDF example
+class CustomScryptKdf implements Kdf {
+  @override
+  String get name =&gt; 'scrypt';
+
+  @override
+  Future&lt;Uint8List&gt; deriveKeyFromPasswordBytes({
+    required Uint8List passwordBytes,
+    required Uint8List salt,
+    Uint8List? userIdBytes,
+  }) async {
+    // Your custom KDF implementation.
+    // ...
+  }
+}
+
+// Usage with custom implementations.
+
+// Registration with custom KDF.
+final customKdf = CustomScryptKdf();
+final saltedKey = await User.createSaltedVerificationKeyFromBytes(
+  userIdBytes: 'alice'.utf8Bytes,
+  passwordBytes: passwordBytes,
+  customKdf: customKdf,  // Use custom KDF instead of built-in
+);
+
+// Authentication with custom hash function.
+final customHash = CustomBlake3Hash();
+
+// Server creates challenge with custom hash
+final server = Server(
+  userId: 'alice',
+  salt: saltedKey.salt,
+  verifierKey: saltedKey.key,
+  customHashFunction: customHash,  // Use custom hash instead of built-in
+);
+final challenge = await server.createChallenge();
+
+// User processes challenge with matching custom hash and KDF
+final user = await User.fromUserCredsBytesAndChallenge(
+  userIdBytes: 'alice'.utf8Bytes,
+  passwordBytes: passwordBytes,
+  challenge: challenge,
+  customHashFunction: customHash,  // Must match server's hash function
+  customKdf: customKdf,
+);
+</code></pre>
+<p><strong>Important:</strong></p>
+<ul>
+<li>The <code>name</code> property must uniquely identify your implementation.</li>
+<li>Hash functions must match between client and server.</li>
+<li>KDFs must match between registration and authentication.</li>
+<li>Custom implementations allow integration with specialized cryptographic libraries or hardware security modules.</li>
+</ul>
+<h2 id="security-best-practices" class="hash-header">Security Best Practices <a href="#security-best-practices" class="hash-link">#</a></h2>
+<h3 id="1-generate-custom-safe-primes-critical-for-production" class="hash-header">1. Generate Custom Safe Primes (Critical for Production) <a href="#1-generate-custom-safe-primes-critical-for-production" class="hash-link">#</a></h3>
+<p><strong>⚠️ Default primes are NOT recommended for production use.</strong></p>
+<p>The default safe prime from RFC5054 may be vulnerable to pre-computed attacks. For production deployments, generate your own custom safe primes.</p>
+<p>See <a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/dev/scripts/generate_safe_primes" rel="ugc"><code>scripts/generate_safe_primes</code></a> for details.</p>
+<h3 id="2-use-strong-key-derivation-functions" class="hash-header">2. Use Strong Key Derivation Functions <a href="#2-use-strong-key-derivation-functions" class="hash-link">#</a></h3>
+<p>The default KDF is Argon2id, which is memory-hard and recommended for password-based key derivation. Alternative KDFs (PBKDF2-SHA256, PBKDF2-SHA512) are available but less secure against brute-force attacks.</p>
+<h3 id="3-srp-complements-not-replaces-tls" class="hash-header">3. SRP Complements, Not Replaces, TLS <a href="#3-srp-complements-not-replaces-tls" class="hash-link">#</a></h3>
+<p>SRP provides authentication and session key derivation. <strong>Always use TLS</strong> or similar for transport encryption. SRP session keys can be used for additional application-layer encryption if needed.</p>
+<h3 id="4-handle-sensitive-data-securely" class="hash-header">4. Handle Sensitive Data Securely <a href="#4-handle-sensitive-data-securely" class="hash-link">#</a></h3>
+<p><strong>Best Practice</strong>: Use <code>Uint8List</code> for passwords instead of <code>String</code> to enable secure memory erasure.</p>
+<p>Unlike <code>String</code> (which is immutable), <code>Uint8List</code> can be zeroed out after use to prevent sensitive data from lingering in memory:</p>
+<pre><code class="language-dart">// Method 1: Use the utf8Bytes extension for convenience.
+final passwordBytes = password.utf8Bytes;
+password = ""; // Clear string reference for garbage collection.
+
+final saltedKey = await User.createSaltedVerificationKeyFromBytes(
+  userIdBytes: 'alice'.utf8Bytes,
+  passwordBytes: passwordBytes,
+);
+
+// Zero out sensitive data when done. Does not rely on GC timing.
+passwordBytes.overwriteWithZeros();
+saltedKey.erase();
+
+// Method 2: String-based API (simpler but potentially less secure).
+final saltedKey = await User.createSaltedVerificationKey(
+  userId: 'alice',
+  password: 'secure-password-123', // String persists until GC
+);
+</code></pre>
+<p><strong>Key principles:</strong></p>
+<ul>
+<li>Convert strings to bytes as early as possible.</li>
+<li>Remove references to strings as soon as possible to allow them to be garbage collected, e.g. <code>password = ""</code> or <code>password = null</code>.</li>
+<li>Zero out byte arrays when no longer needed using <code>.overwriteWithZeros()</code>.</li>
+<li>Use <code>.erase()</code> methods on SRP objects (<code>SaltedVerificationKey</code>, <code>Challenge</code>, <code>UserSessionVerifiers</code>) when they are no longer needed.</li>
+<li>Strings cannot be securely erased like byte arrays can - use byte-based APIs (<code>createSaltedVerificationKeyFromBytes</code>, <code>fromUserCredsBytesAndChallenge</code>) for maximum security, especially if strings can be avoided entirely.</li>
+</ul>
+<p><strong>Sensitive data examples:</strong></p>
+<ul>
+<li>Passwords</li>
+<li>Private keys</li>
+<li>User IDs (if privacy-sensitive)</li>
+</ul>
+<p>See <a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/dev/SECURITY.md" rel="ugc">SECURITY.md</a> for more security tips.</p>
+<h2 id="performance-and-profiling" class="hash-header">Performance and Profiling <a href="#performance-and-profiling" class="hash-link">#</a></h2>
+<p>See <a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/dev/PROFILING.md" rel="ugc">PROFILING.md</a> for a performance profiling and optimization
+guide, including how to optimize Argon2id parameters via benchmarking.</p>
+<h2 id="additional-resources" class="hash-header">Additional Resources <a href="#additional-resources" class="hash-link">#</a></h2>
+<ul>
+<li><strong>Examples</strong>: See the <a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/dev/example" rel="ugc">example folder</a>, such as <a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/dev/example/dsrp.dart" rel="ugc">example/dsrp.dart</a> for a complete authentication flow.</li>
+<li><strong>API Documentation</strong>: Full API docs available at <a href="https://pub.dev/documentation/dsrp/latest/">pub.dev</a></li>
+<li><strong>Issues</strong>: Report bugs at the <a href="https://codeberg.org/fictiontoreality/dsrp/issues" rel="ugc">issue tracker</a></li>
+<li><strong>RFC5054</strong>: <a href="https://datatracker.ietf.org/doc/html/rfc5054" rel="ugc">SRP specification</a></li>
+</ul>
+<h2 id="contributions" class="hash-header">Contributions <a href="#contributions" class="hash-link">#</a></h2>
+<ul>
+<li>See <a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/dev/CONTRIBUTING.md" rel="ugc">CONTRIBUTING.md</a> on ways to contribute.</li>
+<li>See <a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/dev/SECURITY.md" rel="ugc">SECURITY.md</a> for reporting security concerns.</li>
+</ul>
+<h2 id="license" class="hash-header">License <a href="#license" class="hash-link">#</a></h2>
+<p>Apache 2.0 - See <a href="https://codeberg.org/fictiontoreality/dsrp/src/branch/dev/LICENSE" rel="ugc">LICENSE</a> for details.</p>
+</section></div></div></div><aside class="detail-info-box"><a class="packages-scores" href="/packages/dsrp/score"><div class="packages-score packages-score-like" data-package="dsrp"><div class="packages-score-value -has-value"><span class="packages-score-value-number">1</span><span class="packages-score-value-sign"></span></div><div class="packages-score-label">likes</div></div><div class="packages-score packages-score-health"><div class="packages-score-value -has-value"><span class="packages-score-value-number">150</span><span class="packages-score-value-sign"></span></div><div class="packages-score-label">points</div></div><div class="packages-score packages-score-downloads" title="Number of downloads of this package during the past 30 days"><div class="packages-score-value -has-value"><span class="packages-score-value-number">231</span><span class="packages-score-value-sign"></span></div><div class="packages-score-label">downloads</div></div></a><h3 class="title">Publisher</h3><p><a href="/publishers/fictiontoreality.dev"><img class="-pub-publisher-shield filter-invert-on-dark" src="/static/hash-biviks7u/img/material-icon-verified.svg" alt="verified publisher" width="14" height="14" title="Published by a pub.dev verified publisher"/>fictiontoreality.dev</a></p><h3 class="title">Weekly Downloads</h3><div id="-weekly-downloads-sparkline" class="weekly-downloads-sparkline" data-widget="weekly-sparkline" data-weekly-sparkline-points="gHwSaQsAAAAJAAAACQAAAEMAAACHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="></div><h3 class="title pkg-infobox-metadata">Metadata</h3><p>Secure Remote Password (SRP-6a) for zero-knowledge authentication without transmitting password-equivalents.</p><p><a class="link" href="https://codeberg.org/fictiontoreality/dsrp" rel="ugc">Repository</a><br/><a class="link" href="https://codeberg.org/fictiontoreality/dsrp/issues" rel="ugc">View&#47;report issues</a><br/></p><h3 class="title">Topics</h3><p><a class="topics-tag" href="/packages?q=topic%3Asecurity" rel="nofollow">#security</a> <a class="topics-tag" href="/packages?q=topic%3Acryptography" rel="nofollow">#cryptography</a> <a class="topics-tag" href="/packages?q=topic%3Aauthentication" rel="nofollow" title="Packages that facilitate authentication.">#authentication</a> <a class="topics-tag" href="/packages?q=topic%3Asrp" rel="nofollow">#srp</a> <a class="topics-tag" href="/packages?q=topic%3Apassword" rel="nofollow">#password</a></p><h3 class="title">Documentation</h3><p><a class="link" href="/documentation/dsrp/latest/">API reference</a><br/></p><h3 class="title">License</h3><p><img class="inline-icon-img filter-invert-on-dark" src="/static/hash-biviks7u/img/material-icon-balance.svg" alt="" width="14" height="14" role="presentation"/>Apache-2.0 (<a href="/packages/dsrp/license">license</a>)</p><h3 class="title">Dependencies</h3><p><a href="/packages/cryptography" title="^2.7.0">cryptography</a>, <a href="/packages/logging" title="^1.3.0">logging</a></p><h3 class="title">More</h3><p><a href="/packages?q=dependency%3Adsrp" rel="nofollow">Packages that depend on dsrp</a></p></aside></div><script type="application/ld+json">{"@context":"http\u003a\u002f\u002fschema.org","@type":"SoftwareSourceCode","name":"dsrp","version":"0.5.4","description":"dsrp - Secure Remote Password \u0028SRP-6a\u0029 for zero-knowledge authentication without transmitting password-equivalents.","url":"https\u003a\u002f\u002fpub.dev\u002fpackages\u002fdsrp","dateCreated":"2025-10-13T19\u003a08\u003a46.923316Z","dateModified":"2025-10-14T01\u003a15\u003a44.263802Z","programmingLanguage":"Dart","image":"https\u003a\u002f\u002fpub.dev\u002fstatic\u002fimg\u002fpub-dev-icon-cover-image.png","license":"https\u003a\u002f\u002fpub.dev\u002fpackages\u002fdsrp\u002flicense"}</script></div><div class="detail-metadata"><h3 class="detail-metadata-title"><span class="detail-metadata-toggle">←</span> Metadata</h3><div class="detail-info-box"><a class="packages-scores" href="/packages/dsrp/score"><div class="packages-score packages-score-like" data-package="dsrp"><div class="packages-score-value -has-value"><span class="packages-score-value-number">1</span><span class="packages-score-value-sign"></span></div><div class="packages-score-label">likes</div></div><div class="packages-score packages-score-health"><div class="packages-score-value -has-value"><span class="packages-score-value-number">150</span><span class="packages-score-value-sign"></span></div><div class="packages-score-label">points</div></div><div class="packages-score packages-score-downloads" title="Number of downloads of this package during the past 30 days"><div class="packages-score-value -has-value"><span class="packages-score-value-number">231</span><span class="packages-score-value-sign"></span></div><div class="packages-score-label">downloads</div></div></a><h3 class="title">Publisher</h3><p><a href="/publishers/fictiontoreality.dev"><img class="-pub-publisher-shield filter-invert-on-dark" src="/static/hash-biviks7u/img/material-icon-verified.svg" alt="verified publisher" width="14" height="14" title="Published by a pub.dev verified publisher"/>fictiontoreality.dev</a></p><h3 class="title">Weekly Downloads</h3><div id="-weekly-downloads-sparkline" class="weekly-downloads-sparkline" data-widget="weekly-sparkline" data-weekly-sparkline-points="gHwSaQsAAAAJAAAACQAAAEMAAACHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="></div><h3 class="title pkg-infobox-metadata">Metadata</h3><p>Secure Remote Password (SRP-6a) for zero-knowledge authentication without transmitting password-equivalents.</p><p><a class="link" href="https://codeberg.org/fictiontoreality/dsrp" rel="ugc">Repository</a><br/><a class="link" href="https://codeberg.org/fictiontoreality/dsrp/issues" rel="ugc">View&#47;report issues</a><br/></p><h3 class="title">Topics</h3><p><a class="topics-tag" href="/packages?q=topic%3Asecurity" rel="nofollow">#security</a> <a class="topics-tag" href="/packages?q=topic%3Acryptography" rel="nofollow">#cryptography</a> <a class="topics-tag" href="/packages?q=topic%3Aauthentication" rel="nofollow" title="Packages that facilitate authentication.">#authentication</a> <a class="topics-tag" href="/packages?q=topic%3Asrp" rel="nofollow">#srp</a> <a class="topics-tag" href="/packages?q=topic%3Apassword" rel="nofollow">#password</a></p><h3 class="title">Documentation</h3><p><a class="link" href="/documentation/dsrp/latest/">API reference</a><br/></p><h3 class="title">License</h3><p><img class="inline-icon-img filter-invert-on-dark" src="/static/hash-biviks7u/img/material-icon-balance.svg" alt="" width="14" height="14" role="presentation"/>Apache-2.0 (<a href="/packages/dsrp/license">license</a>)</p><h3 class="title">Dependencies</h3><p><a href="/packages/cryptography" title="^2.7.0">cryptography</a>, <a href="/packages/logging" title="^1.3.0">logging</a></p><h3 class="title">More</h3><p><a href="/packages?q=dependency%3Adsrp" rel="nofollow">Packages that depend on dsrp</a></p></div><p class="detail-lead-back"><a class="detail-metadata-toggle">Back</a></p></div><div id="-screenshot-carousel" class="carousel"><fab id="-carousel-prev" class="mdc-fab carousel-prev carousel-nav" data-mdc-auto-init="MDCRipple" title="Previous" data-ga-click-event="screenshot-carousel-prev-click" tabindex="0"><div class="mdc-fab__ripple"></div><img class="mdc-fab__icon" src="/static/hash-biviks7u/img/keyboard_arrow_left.svg" alt="previous" width="24" height="24" aria-hidden="true"/></fab><div id="-image-container" class="image-container"></div><fab id="-carousel-next" class="mdc-fab carousel-next carousel-nav" data-mdc-auto-init="MDCRipple" title="Next" data-ga-click-event="screenshot-carousel-next-click" tabindex="0"><div class="mdc-fab__ripple"></div><img class="mdc-fab__icon" src="/static/hash-biviks7u/img/keyboard_arrow_right.svg" alt="next" width="24" height="24" aria-hidden="true"/></fab><p id="-screenshot-description" class="screenshot-description"></p></div></main><footer class="site-footer"><a class="link" href="https://dart.dev/">Dart language</a><a class="link sep" href="/report?subject=package%3Adsrp&amp;url=https%3A%2F%2Fpub.dev%2Fpackages%2Fdsrp">Report package</a><a class="link sep" href="/policy">Policy</a><a class="link sep" href="https://www.google.com/intl/en/policies/terms/">Terms</a><a class="link sep" href="https://developers.google.com/terms/">API Terms</a><a class="link sep" href="/security">Security</a><a class="link sep" href="https://www.google.com/intl/en/policies/privacy/">Privacy</a><a class="link sep" href="/help">Help</a><a class="link icon sep" href="/feed.atom"><img class="inline-icon" src="/static/hash-biviks7u/img/rss-feed-icon.svg" alt="RSS" width="20" height="20" title="RSS/atom feed"/></a><a class="link icon github_issue" href="https://github.com/dart-lang/pub-dev/issues/new"><img class="inline-icon" src="/static/hash-biviks7u/img/bug-report-white-96px.png" alt="bug report" width="20" height="20" title="Report an issue with this site"/></a></footer><script src="/static/hash-biviks7u/highlight/highlight-with-init.js" defer="defer"></script></body></html>

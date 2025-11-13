@@ -12,7 +12,7 @@ router = APIRouter(prefix="/user", tags=["用户"])
 @router.get("/me", response_model=schemas.UserResponse)
 async def get_current_user_info(
     current_user: models.User = Depends(get_current_active_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """获取当前用户信息"""
     return current_user
@@ -22,18 +22,12 @@ async def get_current_user_info(
 async def update_api_keys(
     api_keys_data: schemas.APIKeysUpdate,
     current_user: models.User = Depends(get_current_active_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    """更新用户API密钥"""
-    # 验证密码hash（前端发送的已经是hash值）
-    if current_user.password_hash != api_keys_data.password:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="密码错误"
-        )
-    
-    # 准备要加密的API密钥数据
-    api_keys_dict = {
+    """更新用户API密钥 - 前端已加密，后端直接存储"""
+
+    # API密钥已经在前端加密，直接存储
+    update_data = {
         "openai_api_key": api_keys_data.openai_api_key,
         "openai_base_url": api_keys_data.openai_base_url,
         "openai_model": api_keys_data.openai_model,
@@ -43,37 +37,30 @@ async def update_api_keys(
         "xunfei_api_key": api_keys_data.xunfei_api_key,
         "glm_api_key": api_keys_data.glm_api_key,
     }
-    
-    # 使用密码hash加密API密钥
-    encrypted_keys = encrypt_api_keys(api_keys_dict, current_user.password_hash)
-    
+
     # 更新用户记录
-    for key, value in encrypted_keys.items():
+    for key, value in update_data.items():
         setattr(current_user, key, value)
-    
+
     db.commit()
     db.refresh(current_user)
-    
-    # 返回解密后的API密钥（仅用于响应）
-    decrypted_keys = decrypt_api_keys(encrypted_keys, current_user.password_hash)
-    return schemas.APIKeysResponse(**decrypted_keys)
+
+    # 返回存储的API密钥
+    return schemas.APIKeysResponse(**update_data)
 
 
 @router.get("/api-keys", response_model=schemas.APIKeysResponse)
 async def get_api_keys(
     password: str,
     current_user: models.User = Depends(get_current_active_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    """获取用户API密钥（需要密码解密）"""
+    """获取用户API密钥（加密状态）"""
     # 验证密码hash（前端发送的已经是hash值）
-    if current_user.password_hash != password:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="密码错误"
-        )
-    
-    # 准备加密的API密钥数据
+    if current_user.master_key_hash != password:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="密码错误")
+
+    # 返回加密的API密钥，前端负责解密
     encrypted_keys = {
         "openai_api_key": current_user.openai_api_key,
         "openai_base_url": current_user.openai_base_url,
@@ -84,47 +71,62 @@ async def get_api_keys(
         "xunfei_api_key": current_user.xunfei_api_key,
         "glm_api_key": current_user.glm_api_key,
     }
-    
-    # 使用密码hash解密API密钥
-    decrypted_keys = decrypt_api_keys(encrypted_keys, current_user.password_hash)
-    return schemas.APIKeysResponse(**decrypted_keys)
+
+    return schemas.APIKeysResponse(**encrypted_keys)
 
 
 @router.put("/profile", response_model=schemas.UserResponse)
 async def update_profile(
     user_data: schemas.UserUpdate,
     current_user: models.User = Depends(get_current_active_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """更新用户个人信息"""
     # 检查用户名是否已存在（如果修改了用户名）
     if user_data.username and user_data.username != current_user.username:
-        existing_user = db.query(models.User).filter(
-            models.User.username == user_data.username
-        ).first()
+        existing_user = (
+            db.query(models.User)
+            .filter(models.User.username == user_data.username)
+            .first()
+        )
         if existing_user:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="用户名已存在"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="用户名已存在"
             )
-    
+
     # 检查邮箱是否已存在（如果修改了邮箱）
     if user_data.email and user_data.email != current_user.email:
-        existing_email = db.query(models.User).filter(
-            models.User.email == user_data.email
-        ).first()
+        existing_email = (
+            db.query(models.User).filter(models.User.email == user_data.email).first()
+        )
         if existing_email:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="邮箱已被注册"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="邮箱已被注册"
             )
-    
+
     # 更新用户信息
     update_data = user_data.dict(exclude_unset=True)
     for field, value in update_data.items():
         setattr(current_user, field, value)
-    
+
     db.commit()
     db.refresh(current_user)
-    
+
     return current_user
+
+
+@router.delete("/delete", response_model=schemas.UserDeleteResponse)
+async def delete_user(
+    current_user: models.User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """注销用户账户（永久删除）"""
+    # 仅依赖JWT认证，无需额外密码验证
+    # 删除用户及其所有相关数据
+    # 由于设置了级联删除，用户的行程和活动也会被自动删除
+    db.delete(current_user)
+    db.commit()
+
+    return schemas.UserDeleteResponse(
+        message="用户注销成功，所有数据已永久删除", username=current_user.username
+    )

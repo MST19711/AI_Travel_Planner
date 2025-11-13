@@ -1,6 +1,9 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, validator
 from typing import Optional, List, Dict, Any
 from datetime import datetime
+
+# 使用标准字符串类型而不是自定义类型
+from pydantic import Field
 
 
 # 基础模型
@@ -25,13 +28,16 @@ class UserBase(BaseSchema):
 # SRP认证相关模型
 class SRPRegisterRequest(BaseSchema):
     """SRP注册请求"""
+
     username: str
     email: str
-    password: str
+    srp_salt: str = Field(..., pattern=r'^[A-Za-z0-9+/]*={0,2}$')
+    srp_verifier: str = Field(..., pattern=r'^[A-Za-z0-9+/]*={0,2}$')
 
 
 class SRPRegisterResponse(BaseSchema):
     """SRP注册响应"""
+
     username: str
     email: str
     message: str = "用户注册成功"
@@ -39,31 +45,36 @@ class SRPRegisterResponse(BaseSchema):
 
 class SRPChallengeRequest(BaseSchema):
     """SRP挑战请求"""
+
     username: str
-    A: str  # 客户端公钥
+    A: str = Field(..., pattern=r'^[A-Za-z0-9+/]*={0,2}$')  # 客户端公钥
 
 
 class SRPChallengeResponse(BaseSchema):
     """SRP挑战响应"""
+
     username: str
-    salt: str  # SRP盐值
-    B: str     # 服务器公钥
+    salt: str = Field(..., pattern=r'^[A-Za-z0-9+/]*={0,2}$')  # SRP盐值
+    B: str = Field(..., pattern=r'^[A-Za-z0-9+/]*={0,2}$')  # 服务器公钥
     session_id: str  # 会话ID
 
 
 class SRPAuthenticateRequest(BaseSchema):
     """SRP认证请求"""
+
     username: str
-    M1: str  # 客户端证明
+    M1: str = Field(..., pattern=r'^[A-Za-z0-9+/]*={0,2}$')  # 客户端证明
     session_id: str  # 会话ID
 
 
 class SRPAuthenticateResponse(BaseSchema):
     """SRP认证响应"""
+
     username: str
-    M2: str  # 服务器证明
-    access_token: str
+    M2: Optional[str] = Field(None, pattern=r'^[A-Za-z0-9+/]*={0,2}$')  # 服务器证明
+    access_token: Optional[str]
     token_type: str = "bearer"
+    success: bool
 
 
 class UserUpdate(BaseSchema):
@@ -73,6 +84,7 @@ class UserUpdate(BaseSchema):
 
 class UserResponse(UserBase):
     id: int
+    userID: int
     created_at: datetime
     updated_at: datetime
 
@@ -177,3 +189,17 @@ class ListResponse(BaseSchema):
     page: int
     size: int
     pages: int
+
+
+# 用户注销相关模型
+class UserDeleteRequest(BaseSchema):
+    """用户注销请求"""
+
+    password: str  # 用于验证用户身份的密码hash
+
+
+class UserDeleteResponse(BaseSchema):
+    """用户注销响应"""
+
+    message: str = "用户注销成功"
+    username: str

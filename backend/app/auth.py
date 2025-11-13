@@ -1,16 +1,21 @@
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
-import os
-from dotenv import load_dotenv
+import secrets
+import base64
 
-# 加载环境变量
-load_dotenv()
+
+# 运行时生成随机JWT密钥（每次服务器重启都会重新生成）
+def generate_random_secret_key() -> str:
+    """生成32字节的随机密钥，使用base64编码"""
+    random_bytes = secrets.token_bytes(32)
+    return base64.urlsafe_b64encode(random_bytes).decode('utf-8')
+
 
 # JWT配置
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here")
-ALGORITHM = os.getenv("ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+SECRET_KEY = generate_random_secret_key()
+ALGORITHM = "HS256"  # 固定使用HS256算法
+ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 固定30分钟过期
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -20,7 +25,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    
+
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

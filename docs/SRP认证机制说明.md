@@ -25,11 +25,11 @@ SRP基于离散对数问题的困难性，使用大素数模数运算来确保�
 ```python
 class User(Base):
     __tablename__ = "users"
-    
+  
     # SRP认证相关字段
     srp_salt = Column(String(255), nullable=True)  # SRP盐值
     srp_verifier = Column(String(255), nullable=True)  # SRP验证器
-    
+  
     # 向后兼容字段
     password_hash = Column(String(255), nullable=True)
 ```
@@ -41,15 +41,16 @@ class User(Base):
 **端点**: `POST /auth/srp/register`
 
 **请求**:
+
 ```json
 {
   "username": "test_user",
-  "email": "test@example.com",
-  "password": "user_password"
+  "email": "test@example.com"
 }
 ```
 
 **响应**:
+
 ```json
 {
   "username": "test_user",
@@ -63,6 +64,7 @@ class User(Base):
 **端点**: `POST /auth/srp/challenge`
 
 **请求**:
+
 ```json
 {
   "username": "test_user"
@@ -70,6 +72,7 @@ class User(Base):
 ```
 
 **响应**:
+
 ```json
 {
   "username": "test_user",
@@ -83,6 +86,7 @@ class User(Base):
 **端点**: `POST /auth/srp/authenticate`
 
 **请求**:
+
 ```json
 {
   "username": "test_user",
@@ -92,6 +96,7 @@ class User(Base):
 ```
 
 **响应**:
+
 ```json
 {
   "username": "test_user",
@@ -113,10 +118,11 @@ class User(Base):
 ### 登录流程
 
 1. **挑战阶段**:
+
    - 客户端发送用户名到 `/auth/srp/challenge`
    - 服务器查找用户并返回盐值和服务器公钥B
-
 2. **认证阶段**:
+
    - 客户端使用密码、盐值和服务器公钥生成客户端公钥A和证明M1
    - 客户端发送A和M1到 `/auth/srp/authenticate`
    - 服务器验证客户端证明M1
@@ -229,14 +235,15 @@ uv run python test_srp_auth.py
 ### 常见问题
 
 1. **认证失败**
+
    - 检查盐值和验证器是否正确存储
    - 验证客户端和服务器使用相同的SRP参数
-
 2. **性能问题**
+
    - SRP计算可能较慢，考虑使用更快的硬件
    - 实现适当的缓存策略
-
 3. **兼容性问题**
+
    - 确保客户端和服务器使用相同版本的pysrp
    - 启用RFC5054兼容性模式
 
