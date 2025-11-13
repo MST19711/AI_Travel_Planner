@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
 
+# 导入路由
+from .routers import auth, users, trips
+
 # 加载环境变量
 load_dotenv()
 
@@ -23,6 +26,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 包含路由
+app.include_router(auth.router)
+app.include_router(users.router)
+app.include_router(trips.router)
 
 @app.get("/")
 async def root():
