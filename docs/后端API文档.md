@@ -269,7 +269,28 @@ Authorization: Bearer <jwt_token>
       "user_id": 1,
       "title": "string",
       "status": "planning",
-      "encrypted_data": "string",
+      "trip_data": {
+        "destination": "string",
+        "start_date": "string",
+        "end_date": "string",
+        "budget": 5000,
+        "travelers": 2,
+        "preferences": {
+          "food": ["中餐", "火锅"],
+          "activities": ["历史景点", "购物"],
+          "accommodation": "酒店"
+        },
+        "activities": [
+          {
+            "day": 1,
+            "date": "2024-01-15",
+            "items": [
+              {"time": "09:00", "activity": "抵达机场"},
+              {"time": "11:00", "activity": "入住酒店"}
+            ]
+          }
+        ]
+      },
       "created_at": "2024-01-01T00:00:00",
       "updated_at": "2024-01-01T00:00:00"
     }
@@ -285,19 +306,40 @@ Authorization: Bearer <jwt_token>
 
 **端点**: `POST /trips/`
 
-**描述**: 创建新的行程（只存储加密数据）
+**描述**: 创建新的行程（存储明文JSON数据）
 
 **请求体**:
 ```json
 {
   "title": "string",
-  "encrypted_data": "string"
+  "trip_data": {
+    "destination": "string",
+    "start_date": "string",
+    "end_date": "string",
+    "budget": 5000,
+    "travelers": 2,
+    "preferences": {
+      "food": ["中餐", "火锅"],
+      "activities": ["历史景点", "购物"],
+      "accommodation": "酒店"
+    },
+    "activities": [
+      {
+        "day": 1,
+        "date": "2024-01-15",
+        "items": [
+          {"time": "09:00", "activity": "抵达机场"},
+          {"time": "11:00", "activity": "入住酒店"}
+        ]
+      }
+    ]
+  }
 }
 ```
 
 **字段说明**:
-- `title`: 行程标题（明文）
-- `encrypted_data`: 加密的行程数据（前端负责加密）
+- `title`: 行程标题
+- `trip_data`: 明文的行程数据（JSON格式）
 
 **响应**: 创建的行程信息
 
@@ -319,7 +361,7 @@ Authorization: Bearer <jwt_token>
 
 **端点**: `PUT /trips/{trip_id}`
 
-**描述**: 更新行程信息（只更新加密数据）
+**描述**: 更新行程信息（更新明文JSON数据）
 
 **路径参数**:
 - `trip_id`: 行程ID
@@ -329,14 +371,35 @@ Authorization: Bearer <jwt_token>
 {
   "title": "string",
   "status": "string",
-  "encrypted_data": "string"
+  "trip_data": {
+    "destination": "string",
+    "start_date": "string",
+    "end_date": "string",
+    "budget": 5000,
+    "travelers": 2,
+    "preferences": {
+      "food": ["中餐", "火锅"],
+      "activities": ["历史景点", "购物"],
+      "accommodation": "酒店"
+    },
+    "activities": [
+      {
+        "day": 1,
+        "date": "2024-01-15",
+        "items": [
+          {"time": "09:00", "activity": "抵达机场"},
+          {"time": "11:00", "activity": "入住酒店"}
+        ]
+      }
+    ]
+  }
 }
 ```
 
 **字段说明**: 所有字段都是可选的
 - `title`: 行程标题
 - `status`: 行程状态
-- `encrypted_data`: 加密的行程数据
+- `trip_data`: 明文的行程数据（JSON格式）
 
 **响应**: 更新后的行程信息
 
@@ -423,7 +486,7 @@ Authorization: Bearer <jwt_token>
   "user_id": "int (用户ID)",
   "title": "string (行程标题)",
   "status": "string (状态: planning, in_progress, completed, cancelled)",
-  "encrypted_data": "string (加密的行程数据)",
+  "trip_data": "dict (明文的行程数据，JSON格式)",
   "created_at": "datetime (创建时间)",
   "updated_at": "datetime (更新时间)"
 }
@@ -458,11 +521,10 @@ Authorization: Bearer <jwt_token>
 - 使用HS256算法签名
 - 每次服务器重启重新生成密钥
 
-### 3. 数据加密
-- 行程数据在客户端加密后存储
+### 3. 数据安全
 - API密钥在客户端加密后存储
-- 服务器仅存储加密数据，不参与加密解密过程
-- 客户端负责所有敏感数据的加密和解密
+- 服务器仅存储加密的API密钥数据
+- 行程数据以明文JSON格式存储，便于后端处理
 
 ### 4. CORS配置
 - 开发环境允许所有来源（生产环境应限制）

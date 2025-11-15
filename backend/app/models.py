@@ -57,21 +57,21 @@ class User(Base):
 
 
 class Trip(Base):
-    """行程模型 - 存储加密的行程数据"""
+    """行程模型 - 存储明文的行程数据"""
 
     __tablename__ = "trips"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    title = Column(String(200), nullable=False)  # 行程标题（明文，用于快速显示）
+    title = Column(String(200), nullable=False)  # 行程标题
 
-    # 行程状态（明文，用于快速过滤）
+    # 行程状态
     status = Column(
         String(20), default="planning"
     )  # planning, in_progress, completed, cancelled
 
-    # 加密的行程数据（包含所有行程详情，前端负责加密解密）
-    encrypted_data = Column(Text, nullable=False)
+    # 行程数据（JSON格式，包含所有行程详情）
+    trip_data = Column(JSON, nullable=False)
 
     # 时间戳
     created_at = Column(DateTime(timezone=True), server_default=func.now())

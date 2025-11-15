@@ -16,6 +16,7 @@ from app.utils.srp_dataType import (
     generate_secure_salt,
 )
 from ..srp_auth import hash_password_for_storage, verify_password_hash
+from ..middleware import get_current_active_user
 
 # 配置日志
 logging.basicConfig(level=logging.DEBUG)
@@ -340,3 +341,16 @@ async def insecure_login(
         access_token=access_token,
         is_insecure_auth=True,
     )
+
+
+# 用户注销（会话注销）
+@router.post("/logout")
+async def logout(
+    current_user: models.User = Depends(get_current_active_user),
+):
+    """用户注销（会话注销）"""
+    # 对于JWT令牌，由于是无状态的，注销主要是客户端行为
+    # 这里可以记录注销日志或进行其他清理操作
+    logger.info(f"用户注销: {current_user.username}")
+
+    return {"message": "注销成功"}

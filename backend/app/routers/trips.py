@@ -53,11 +53,11 @@ async def create_trip(
     current_user: models.User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    """创建新行程 - 只存储加密数据"""
-    # 创建行程，不进行业务逻辑验证
+    """创建新行程 - 存储明文数据"""
+    # 创建行程
     db_trip = models.Trip(
         title=trip_data.title,
-        encrypted_data=trip_data.encrypted_data,
+        trip_data=trip_data.trip_data,
         user_id=current_user.id,
     )
 

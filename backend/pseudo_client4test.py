@@ -5,9 +5,6 @@ import secrets
 import srp
 import hashlib
 from typing import Dict, Any, Optional
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 # 服务器基础URL
 BASE_URL = "http://localhost:8000"
@@ -136,49 +133,19 @@ class SRPClient:
         return {"Authorization": f"Bearer {self.access_token}"}
 
 
-class TripCrypto:
-    """行程数据加密解密类"""
+class TripDataManager:
+    """行程数据管理类"""
 
-    def __init__(self, password: str):
-        self.password = password
-        self.salt = b"trip_encryption_salt"  # 固定的盐值用于测试
+    def __init__(self):
+        pass
 
-    def derive_key(self) -> bytes:
-        """从密码派生加密密钥"""
-        kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=self.salt,
-            iterations=100000,
-        )
-        key = base64.urlsafe_b64encode(kdf.derive(self.password.encode()))
-        return key
+    def prepare_trip_data(self, trip_data: Dict[str, Any]) -> Dict[str, Any]:
+        """准备行程数据（不再需要加密）"""
+        return trip_data
 
-    def encrypt_trip_data(self, trip_data: Dict[str, Any]) -> str:
-        """加密行程数据"""
-        key = self.derive_key()
-        fernet = Fernet(key)
-
-        # 将行程数据转换为JSON字符串并加密
-        json_data = json.dumps(trip_data, ensure_ascii=False)
-        encrypted_data = fernet.encrypt(json_data.encode())
-
-        return base64.urlsafe_b64encode(encrypted_data).decode()
-
-    def decrypt_trip_data(self, encrypted_data: str) -> Dict[str, Any]:
-        """解密行程数据"""
-        try:
-            key = self.derive_key()
-            fernet = Fernet(key)
-
-            encrypted_bytes = base64.urlsafe_b64decode(encrypted_data.encode())
-            decrypted_bytes = fernet.decrypt(encrypted_bytes)
-            json_data = decrypted_bytes.decode()
-
-            return json.loads(json_data)
-        except Exception as e:
-            print(f"❌ 解密失败: {str(e)}")
-            return {}
+    def parse_trip_data(self, trip_data: Dict[str, Any]) -> Dict[str, Any]:
+        """解析行程数据（不再需要解密）"""
+        return trip_data
 
 
 class TestClient:
@@ -186,7 +153,7 @@ class TestClient:
 
     def __init__(self):
         self.srp_client = SRPClient()
-        self.trip_crypto = None
+        self.trip_manager = TripDataManager()
         self.test_user = None
         self.test_trip = None
 
@@ -225,8 +192,8 @@ class TestClient:
                 "password": password,
             }
 
-            # 初始化行程加密器
-            self.trip_crypto = TripCrypto(password)
+            # 初始化行程管理器
+            self.trip_manager = TripDataManager()
 
             return True
 
@@ -330,13 +297,13 @@ class TestClient:
                 ],
             }
 
-            # 加密行程数据
-            encrypted_data = self.trip_crypto.encrypt_trip_data(trip_data)
+            # 准备行程数据
+            prepared_data = self.trip_manager.prepare_trip_data(trip_data)
 
             # 创建行程请求
             trip_request = {
                 "title": trip_data["title"],
-                "encrypted_data": encrypted_data,
+                "trip_data": prepared_data,
             }
 
             print("📝 创建行程...")
@@ -397,22 +364,14 @@ class TestClient:
 
             if response.status_code == 200:
                 downloaded_trip = response.json()
-                encrypted_data = downloaded_trip['encrypted_data']
+                trip_data = downloaded_trip['trip_data']
 
-                print("🔓 解密行程数据...")
-                decrypted_data = self.trip_crypto.decrypt_trip_data(encrypted_data)
-
-                if decrypted_data:
-                    print("✅ 行程数据解密成功！")
-                    print(f"📊 解密后的行程数据:")
-                    print(f"   标题: {decrypted_data.get('title', 'N/A')}")
-                    print(f"   目的地: {decrypted_data.get('destination', 'N/A')}")
-                    print(f"   天数: {len(decrypted_data.get('activities', []))}")
-                    print(f"   预算: {decrypted_data.get('budget', 'N/A')}元")
-                    return True
-                else:
-                    print("❌ 行程数据解密失败")
-                    return False
+                print("📊 获取到的行程数据:")
+                print(f"   标题: {trip_data.get('title', 'N/A')}")
+                print(f"   目的地: {trip_data.get('destination', 'N/A')}")
+                print(f"   天数: {len(trip_data.get('activities', []))}")
+                print(f"   预算: {trip_data.get('budget', 'N/A')}元")
+                return True
             else:
                 print(f"❌ 下载行程失败: {response.status_code} - {response.text}")
                 return False

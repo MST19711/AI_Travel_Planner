@@ -118,19 +118,19 @@ class TripBase(BaseSchema):
 
 class TripCreate(BaseSchema):
     title: str
-    encrypted_data: str  # 前端加密后的行程数据
+    trip_data: Dict[str, Any]  # 明文的行程数据
 
 
 class TripUpdate(BaseSchema):
     title: Optional[str] = None
     status: Optional[str] = None
-    encrypted_data: Optional[str] = None  # 前端加密后的行程数据
+    trip_data: Optional[Dict[str, Any]] = None  # 明文的行程数据
 
 
 class TripResponse(TripBase):
     id: int
     user_id: int
-    encrypted_data: str  # 加密的行程数据，前端负责解密
+    trip_data: Dict[str, Any]  # 明文的行程数据
     created_at: datetime
     updated_at: datetime
 
