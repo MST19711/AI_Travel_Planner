@@ -30,7 +30,7 @@ class SRPClient:
         try:
             # 使用pysrp生成salt和verifier
             salt, verifier = srp.create_salted_verification_key(
-                username, password, hash_alg=srp.SHA256, ng_type=srp.NG_2048
+                username, password, hash_alg=srp.SHA256, ng_type=srp.NG_4096
             )
 
             # 构建注册请求数据
@@ -71,7 +71,7 @@ class SRPClient:
             url_init = f"{self.base_url}/auth/SRPAuthInit"
 
             # 创建客户端SRP对象 - 按照官方示例
-            usr = srp.User(username, password, hash_alg=srp.SHA256, ng_type=srp.NG_2048)
+            usr = srp.User(username, password, hash_alg=srp.SHA256, ng_type=srp.NG_4096)
             uname, A = usr.start_authentication()
 
             payload_init = {
@@ -444,24 +444,121 @@ class TestClient:
             print(f"❌ 用户注销失败: {str(e)}")
             return False
 
+    def test_wrong_password_auth(self) -> bool:
+        """测试使用错误密码认证"""
+        try:
+            if not self.test_user:
+                print("❌ 没有测试用户")
+                return False
+
+            print("🔐 测试错误密码认证...")
+            print("   使用错误密码尝试登录...")
+
+            # 使用错误的密码尝试认证
+            wrong_password = "wrong_password_456"
+            auth_success = self.srp_client.authenticate(
+                self.test_user["username"], wrong_password
+            )
+
+            if auth_success:
+                print("❌ 安全测试失败：错误密码竟然认证成功了！")
+                return False
+            else:
+                print("✅ 安全测试通过：错误密码被正确拒绝")
+                return True
+
+        except Exception as e:
+            print(f"❌ 安全测试出错: {str(e)}")
+            return False
+
+    def test_wrong_username_auth(self) -> bool:
+        """测试使用错误用户名认证"""
+        try:
+            print("🔐 测试错误用户名认证...")
+            print("   使用错误用户名尝试登录...")
+
+            # 使用错误的用户名尝试认证
+            wrong_username = "non_existent_user_123"
+            wrong_password = "any_password"
+            auth_success = self.srp_client.authenticate(wrong_username, wrong_password)
+
+            if auth_success:
+                print("❌ 安全测试失败：不存在的用户竟然认证成功了！")
+                return False
+            else:
+                print("✅ 安全测试通过：不存在的用户被正确拒绝")
+                return True
+
+        except Exception as e:
+            print(f"❌ 安全测试出错: {str(e)}")
+            return False
+
+    def test_unauthorized_access(self) -> bool:
+        """测试未授权访问保护"""
+        try:
+            print("🔐 测试未授权访问保护...")
+            print("   尝试在未登录状态下访问受保护资源...")
+
+            # 尝试在没有认证的情况下访问受保护资源
+            response = requests.get(f"{BASE_URL}/trips/")
+
+            # 401 Unauthorized 或 403 Forbidden 都是正确的安全响应
+            if response.status_code in [401, 403]:
+                print(
+                    f"✅ 安全测试通过：未授权访问被正确拒绝 (状态码: {response.status_code})"
+                )
+                return True
+            else:
+                print(f"❌ 安全测试失败：未授权访问返回状态码 {response.status_code}")
+                return False
+
+        except Exception as e:
+            print(f"❌ 安全测试出错: {str(e)}")
+            return False
+
     def run_full_test(self) -> bool:
         """运行完整的端到端测试"""
         print("🚀 开始完整的端到端测试流程...")
         print("=" * 50)
 
-        steps = [
+        # 功能测试步骤
+        functional_steps = [
             ("设置测试用户", self.setup_test_user),
             ("上传API密钥", self.upload_api_keys),
             ("创建行程", self.create_trip),
             ("获取行程列表", self.get_trips_list),
             ("下载并解密行程", self.download_and_decrypt_trip),
+        ]
+
+        # 安全测试步骤
+        security_steps = [
+            ("测试错误密码认证", self.test_wrong_password_auth),
+            ("测试错误用户名认证", self.test_wrong_username_auth),
+            ("测试未授权访问保护", self.test_unauthorized_access),
             ("注销用户", self.delete_user),
         ]
 
         success_count = 0
-        total_steps = len(steps)
+        total_steps = len(functional_steps) + len(security_steps)
 
-        for step_name, step_func in steps:
+        # 执行功能测试
+        print("\n🔧 功能测试阶段")
+        print("-" * 30)
+        for step_name, step_func in functional_steps:
+            print(f"\n📋 步骤 {success_count + 1}/{total_steps}: {step_name}")
+            print("-" * 30)
+
+            if step_func():
+                success_count += 1
+                print(f"✅ {step_name} - 成功")
+            else:
+                print(f"❌ {step_name} - 失败")
+                break
+
+        # 执行安全测试
+        print("\n🔒 安全测试阶段")
+        print("-" * 30)
+        for step_name, step_func in security_steps:
             print(f"\n📋 步骤 {success_count + 1}/{total_steps}: {step_name}")
             print("-" * 30)
 

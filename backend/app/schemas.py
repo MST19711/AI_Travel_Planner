@@ -85,6 +85,7 @@ class UserUpdate(BaseSchema):
 class UserResponse(UserBase):
     id: int
     userID: int
+    is_insecure_auth: bool = False  # 是否使用不安全密码传输
     created_at: datetime
     updated_at: datetime
 
@@ -102,7 +103,7 @@ class APIKeysBase(BaseSchema):
 
 
 class APIKeysUpdate(APIKeysBase):
-    password: str  # 用于加密API密钥的用户密码
+    pass  # 所有API密钥字段都是可选的，前端负责加密
 
 
 class APIKeysResponse(APIKeysBase):
@@ -134,44 +135,6 @@ class TripResponse(TripBase):
     updated_at: datetime
 
 
-# 活动相关模型
-class ActivityBase(BaseSchema):
-    day_number: int
-    activity_date: datetime
-    title: str
-    description: Optional[str] = None
-    location: Optional[str] = None
-    start_time: Optional[str] = None
-    end_time: Optional[str] = None
-    cost_estimate: Optional[int] = None
-    category: Optional[str] = None
-
-
-class ActivityCreate(ActivityBase):
-    pass
-
-
-class ActivityUpdate(BaseSchema):
-    day_number: Optional[int] = None
-    activity_date: Optional[datetime] = None
-    title: Optional[str] = None
-    description: Optional[str] = None
-    location: Optional[str] = None
-    start_time: Optional[str] = None
-    end_time: Optional[str] = None
-    cost_estimate: Optional[int] = None
-    category: Optional[str] = None
-    completed: Optional[bool] = None
-
-
-class ActivityResponse(ActivityBase):
-    id: int
-    trip_id: int
-    completed: bool
-    created_at: datetime
-    updated_at: datetime
-
-
 # 认证相关模型
 class Token(BaseSchema):
     access_token: str
@@ -191,15 +154,34 @@ class ListResponse(BaseSchema):
     pages: int
 
 
+# 不安全密码传输相关模型
+class InsecureRegisterRequest(BaseSchema):
+    """不安全密码传输注册请求"""
+
+    username: str
+    email: str
+    password: str  # 明文密码
+
+
+class InsecureLoginRequest(BaseSchema):
+    """不安全密码传输登录请求"""
+
+    username: str
+    password: str  # 明文密码
+
+
+class InsecureLoginResponse(BaseSchema):
+    """不安全密码传输登录响应"""
+
+    username: str
+    access_token: str
+    token_type: str = "bearer"
+    is_insecure_auth: bool = True
+
+
 # 用户注销相关模型
-class UserDeleteRequest(BaseSchema):
-    """用户注销请求"""
-
-    password: str  # 用于验证用户身份的密码hash
-
-
 class UserDeleteResponse(BaseSchema):
     """用户注销响应"""
 
-    message: str = "用户注销成功"
+    message: str = "用户注销成功，所有数据已永久删除"
     username: str

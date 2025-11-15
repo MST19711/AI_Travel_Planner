@@ -30,8 +30,8 @@ dependencies:
   encrypt: ^5.0.1
   crypto: ^3.0.3
   
-  # SRP认证库
-  dsrp: ^0.5.4
+  # SRP认证库 - 使用Pointycastle替代dsrp
+  pointycastle: ^3.7.0
   
 
   # UI组件

@@ -17,7 +17,7 @@ class SRPSession:
         """创建SRP会话并存储验证器对象"""
         # 创建服务器端SRP对象
         svr = srp.Verifier(
-            username, salt, verifier, A, hash_alg=srp.SHA256, ng_type=srp.NG_2048
+            username, salt, verifier, A, hash_alg=srp.SHA256, ng_type=srp.NG_4096
         )
         session_id = f"session_{username}_{id(svr)}"
         self.sessions[session_id] = {
@@ -47,3 +47,8 @@ def generate_session_token() -> str:
 def hash_password_for_storage(password: str) -> str:
     """为存储生成密码hash（仅用于非SRP场景的兼容性）"""
     return hashlib.sha256(password.encode()).hexdigest()
+
+
+def verify_password_hash(password: str, password_hash: str) -> bool:
+    """验证密码hash"""
+    return hash_password_for_storage(password) == password_hash

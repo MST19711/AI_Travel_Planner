@@ -169,14 +169,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.7"
-  cryptography:
-    dependency: transitive
-    description:
-      name: cryptography
-      sha256: d146b76d33d94548cf035233fbc2f4338c1242fa119013bead807d033fc4ae05
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.7.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -193,14 +185,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.3.6"
-  dsrp:
-    dependency: "direct main"
-    description:
-      name: dsrp
-      sha256: dc44d77b2b5ab657082bc65123af5c48a8a991ab7d2f818424775fb2f27c6eb6
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.5.4"
   encrypt:
     dependency: "direct main"
     description:
@@ -489,7 +473,7 @@ packages:
     source: hosted
     version: "2.1.8"
   pointycastle:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: pointycastle
       sha256: "4be0097fcf3fd3e8449e53730c631200ebc7b88016acecab2b0da2f0149222fe"

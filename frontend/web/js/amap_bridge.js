@@ -3,10 +3,16 @@ let map = null;
 let markers = [];
 let routes = [];
 let selectedMarkers = new Set();
+let isMapLoaded = false;
 
 // 初始化高德地图
 function initAmap(apiKey) {
   return new Promise((resolve, reject) => {
+    if (!apiKey || apiKey.trim() === '') {
+      reject(new Error('高德地图API密钥为空，请先配置API密钥'));
+      return;
+    }
+
     // 检查是否已经加载了高德地图API
     if (window.AMap) {
       createMap(apiKey);
@@ -23,7 +29,7 @@ function initAmap(apiKey) {
       resolve();
     };
     script.onerror = function() {
-      reject(new Error('加载高德地图API失败'));
+      reject(new Error('加载高德地图API失败，请检查网络连接和API密钥'));
     };
     document.head.appendChild(script);
   });
@@ -37,16 +43,42 @@ function createMap(apiKey) {
     return;
   }
 
-  map = new AMap.Map('map-container', {
-    zoom: 13,
-    center: [116.397428, 39.90923],  // 北京天安门
-    zoomEnable: true,
-    dragEnable: true,
-    resizeEnable: true,
-    viewMode: '2D'
-  });
+  try {
+    // 确保地图容器可见
+    container.style.display = 'block';
 
-  console.log('高德地图初始化完成');
+    map = new AMap.Map('map-container', {
+      zoom: 13,
+      center: [116.397428, 39.90923],  // 北京天安门
+      zoomEnable: true,
+      dragEnable: true,
+      resizeEnable: true,
+      viewMode: '2D',
+      mapStyle: 'amap://styles/normal'  // 标准地图样式
+    });
+
+    // 添加地图加载完成事件
+    map.on('complete', function() {
+      isMapLoaded = true;
+      console.log('高德地图初始化完成');
+
+      // 通知Dart端地图已加载
+      if (window.onMapLoaded) {
+        window.onMapLoaded();
+      }
+    });
+
+    // 添加地图点击事件
+    map.on('click', function(e) {
+      if (window.onMapClick) {
+        window.onMapClick({lng: e.lnglat.getLng(), lat: e.lnglat.getLat()});
+      }
+    });
+
+  } catch (error) {
+    console.error('创建地图失败:', error);
+    throw error;
+  }
 }
 
 // 创建标记点
@@ -304,3 +336,23 @@ window.setCenter = setCenter;
 window.setZoom = setZoom;
 window.getSelectedMarkers = getSelectedMarkers;
 window.clearSelectedMarkers = clearSelectedMarkers;
+
+// 检查地图是否已加载
+window.isMapLoaded = function() {
+  return isMapLoaded;
+};
+
+// 获取地图实例
+window.getMap = function() {
+  return map;
+};
+
+// 获取所有标记点
+window.getAllMarkers = function() {
+  return markers.map(item => ({
+                       id: item.id,
+                       lng: item.marker.getPosition().getLng(),
+                       lat: item.marker.getPosition().getLat(),
+                       content: item.marker.getContent()
+                     }));
+};

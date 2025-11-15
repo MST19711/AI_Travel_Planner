@@ -32,6 +32,10 @@ class User(Base):
     srp_salt = Column(Text, nullable=False)  # SRP盐值 (Base64编码)
     srp_verifier = Column(Text, nullable=False)  # SRP验证器（Base64编码的大整数）
 
+    # 不安全密码传输相关字段（可选）
+    insecure_password_hash = Column(String(64), nullable=True)  # 密码hash (SHA256)
+    is_insecure_auth = Column(Boolean, default=False)  # 是否使用不安全密码传输
+
     # API密钥配置（使用AES加密存储）
     openai_api_key = Column(String(255), nullable=True)
     openai_base_url = Column(String(255), nullable=True)
@@ -77,36 +81,3 @@ class Trip(Base):
 
     # 关系
     user = relationship("User", back_populates="trips")
-    activities = relationship(
-        "Activity", back_populates="trip", cascade="all, delete-orphan"
-    )
-
-
-class Activity(Base):
-    """子行程活动模型"""
-
-    __tablename__ = "activities"
-
-    id = Column(Integer, primary_key=True, index=True)
-    trip_id = Column(Integer, ForeignKey("trips.id"), nullable=False)
-    day_number = Column(Integer, nullable=False)  # 第几天
-    activity_date = Column(DateTime(timezone=True), nullable=False)
-    title = Column(String(200), nullable=False)
-    description = Column(Text, nullable=True)
-    location = Column(String(200), nullable=True)
-    start_time = Column(String(10), nullable=True)  # HH:MM格式
-    end_time = Column(String(10), nullable=True)  # HH:MM格式
-    cost_estimate = Column(Integer, nullable=True)  # 预估费用（单位：元）
-    category = Column(String(50), nullable=True)  # 活动类别（餐饮、景点、交通等）
-
-    # 是否已完成
-    completed = Column(Boolean, default=False)
-
-    # 时间戳
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
-    )
-
-    # 关系
-    trip = relationship("Trip", back_populates="activities")

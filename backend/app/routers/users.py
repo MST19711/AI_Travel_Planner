@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from .. import models, schemas
 from ..middleware import get_current_active_user
-from ..crypto import encrypt_api_keys, decrypt_api_keys
 
 router = APIRouter(prefix="/user", tags=["用户"])
 
@@ -51,16 +50,11 @@ async def update_api_keys(
 
 @router.get("/api-keys", response_model=schemas.APIKeysResponse)
 async def get_api_keys(
-    password: str,
     current_user: models.User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    """获取用户API密钥（加密状态）"""
-    # 验证密码hash（前端发送的已经是hash值）
-    if current_user.master_key_hash != password:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="密码错误")
-
-    # 返回加密的API密钥，前端负责解密
+    """获取用户API密钥（客户端已加密，后端直接返回）"""
+    # API密钥已经在前端加密，直接返回存储的加密数据
     encrypted_keys = {
         "openai_api_key": current_user.openai_api_key,
         "openai_base_url": current_user.openai_base_url,
