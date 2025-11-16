@@ -169,6 +169,158 @@ cd frontend
 flutter run -d chrome --debug
 ```
 
+## 🐳 Docker部署
+
+项目提供了完整的Docker容器化部署方案，支持一键启动整个应用。
+
+### 快速开始
+
+#### 方法一：使用预构建镜像（推荐）
+
+1. **加载预构建镜像**
+   ```bash
+   # 从tar文件加载镜像
+   docker load -i ai-travel-planner.tar
+   
+   # 验证镜像加载成功
+   docker images | grep ai-travel-planner
+   ```
+
+2. **运行容器**
+   ```bash
+   docker run -d \
+     -p 8080:80 \
+     -v ai_travel_data:/app/data \
+     -v ai_travel_logs:/var/log/nginx \
+     --name ai-travel-planner \
+     ai-travel-planner:latest
+   ```
+
+3. **访问应用**
+   - 前端界面: http://localhost:8080
+   - API文档: http://localhost:8080/docs
+   - 健康检查: http://localhost:8080/health
+
+#### 方法二：使用docker-compose
+
+1. **构建并启动容器**
+   ```bash
+   # 构建镜像并启动服务
+   docker-compose up -d
+   
+   # 或者使用构建脚本
+   ./build.sh
+   docker-compose up -d
+   ```
+
+2. **访问应用**
+   - 前端界面: http://localhost:8080
+   - API文档: http://localhost:8080/docs
+   - 健康检查: http://localhost:8080/health
+
+3. **查看服务状态**
+   ```bash
+   docker-compose ps
+   docker-compose logs -f
+   ```
+
+4. **停止服务**
+   ```bash
+   docker-compose down
+   ```
+
+#### 方法三：从源码构建镜像
+
+1. **构建镜像**
+   ```bash
+   docker build -t ai-travel-planner:latest .
+   ```
+
+2. **运行容器**
+   ```bash
+   docker run -d \
+     -p 8080:80 \
+     -v ai_travel_data:/app/data \
+     -v ai_travel_logs:/var/log/nginx \
+     --name ai-travel-planner \
+     ai-travel-planner:latest
+   ```
+
+### 镜像打包和分发
+
+#### 保存镜像到文件
+```bash
+# 将镜像保存为tar文件
+docker save -o ai-travel-planner.tar ai-travel-planner:latest
+
+# 压缩镜像文件（可选）
+tar -czf ai-travel-planner.tar.gz ai-travel-planner.tar
+```
+
+#### 从文件加载镜像
+```bash
+# 从tar文件加载镜像
+docker load -i ai-travel-planner.tar
+
+# 如果使用压缩文件，先解压
+tar -xzf ai-travel-planner.tar.gz
+docker load -i ai-travel-planner.tar
+```
+
+#### 验证镜像
+```bash
+# 检查镜像信息
+docker images ai-travel-planner:latest
+
+# 运行测试容器
+docker run --rm -p 8080:80 ai-travel-planner:latest
+```
+
+### 环境配置
+
+1. **复制环境变量文件**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **编辑配置**（可选）
+   修改 `.env` 文件中的安全配置：
+   ```env
+   SECRET_KEY=your-very-secure-production-secret-key
+   ACCESS_TOKEN_EXPIRE_MINUTES=1440
+   ```
+
+### 数据持久化
+
+容器使用数据卷确保数据安全：
+- `ai_travel_data`: 存储SQLite数据库文件
+- `ai_travel_logs`: 存储Nginx日志文件
+
+### 服务架构
+
+容器内运行以下服务：
+- **Nginx (端口80)**: 静态文件服务和API反向代理
+- **FastAPI (端口8000)**: 后端API服务
+- **SQLite数据库**: 数据存储
+
+### 健康检查
+
+容器包含健康检查机制，可通过以下方式验证：
+```bash
+# 检查容器健康状态
+docker inspect ai-travel-planner --format='{{.State.Health.Status}}'
+
+# 直接访问健康端点
+curl http://localhost:8080/health
+```
+
+### 开发环境 vs 生产环境
+
+| 环境 | 启动方式 | 特点 |
+|------|----------|------|
+| 开发环境 | `cd backend && uv run uvicorn...` + `cd frontend && flutter run` | 热重载、调试模式 |
+| 生产环境 | Docker容器 | 优化性能、安全配置、持久化存储 |
+
 ### 一键启动开发环境
 ```bash
 ./start_dev.sh

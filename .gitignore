@@ -122,3 +122,19 @@ frontend/.packages
 frontend/.pub-cache/
 frontend/.pub/
 frontend/coverage/
+
+# Docker
+.dockerignore
+*.tar.gz
+*.tar
+docker-compose.override.yml
+ai-travel-planner.tar
+ai-travel-planner.tar.gz
+
+# Production environment files
+.env
+.env.production
+
+# Docker volumes (data directories)
+data/
+volumes/
