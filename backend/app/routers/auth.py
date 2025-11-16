@@ -343,6 +343,16 @@ async def insecure_login(
     )
 
 
+# Token验证端点
+@router.get("/verify")
+async def verify_token_endpoint(
+    current_user: models.User = Depends(get_current_active_user),
+):
+    """验证JWT令牌有效性"""
+    logger.info(f"Token验证: 用户 {current_user.username} 的令牌有效")
+    return {"valid": True, "username": current_user.username}
+
+
 # 用户注销（会话注销）
 @router.post("/logout")
 async def logout(

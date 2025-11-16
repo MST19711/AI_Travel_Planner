@@ -106,11 +106,25 @@ async def update_trip(
 
     # 更新行程信息，不进行业务逻辑验证
     update_data = trip_data.dict(exclude_unset=True)
+    
+    # 调试日志：打印接收到的更新数据
+    print(f"=== 更新行程 {trip_id} ===")
+    print(f"接收到的更新数据: {update_data}")
+    if 'trip_data' in update_data:
+        print(f"trip_data 内容: {update_data['trip_data']}")
+        if 'activities' in update_data['trip_data']:
+            print(f"activities 数量: {len(update_data['trip_data']['activities'])}")
+    
     for field, value in update_data.items():
         setattr(trip, field, value)
 
     db.commit()
     db.refresh(trip)
+    
+    # 调试日志：打印更新后的数据
+    print(f"更新后的 trip_data: {trip.trip_data}")
+    if trip.trip_data and 'activities' in trip.trip_data:
+        print(f"更新后的 activities 数量: {len(trip.trip_data['activities'])}")
 
     return trip
 

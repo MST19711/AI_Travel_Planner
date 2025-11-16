@@ -23,9 +23,8 @@ async def update_api_keys(
     current_user: models.User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    """更新用户API密钥 - 前端已加密，后端直接存储"""
+    """更新用户API密钥"""
 
-    # API密钥已经在前端加密，直接存储
     update_data = {
         "openai_api_key": api_keys_data.openai_api_key,
         "openai_base_url": api_keys_data.openai_base_url,
@@ -53,9 +52,8 @@ async def get_api_keys(
     current_user: models.User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    """获取用户API密钥（客户端已加密，后端直接返回）"""
-    # API密钥已经在前端加密，直接返回存储的加密数据
-    encrypted_keys = {
+    """获取用户API密钥"""
+    keys = {
         "openai_api_key": current_user.openai_api_key,
         "openai_base_url": current_user.openai_base_url,
         "openai_model": current_user.openai_model,
@@ -66,7 +64,7 @@ async def get_api_keys(
         "glm_api_key": current_user.glm_api_key,
     }
 
-    return schemas.APIKeysResponse(**encrypted_keys)
+    return schemas.APIKeysResponse(**keys)
 
 
 @router.put("/profile", response_model=schemas.UserResponse)
