@@ -1,6 +1,6 @@
 # AI旅行规划师 (AI Travel Planner)
 
-基于Flutter Web的智能旅行规划应用，集成AI技术简化旅行规划过程。
+基于React + FastAPI的智能旅行规划应用，集成AI技术简化旅行规划过程。
 
 ## 项目概述
 
@@ -86,12 +86,14 @@
 ## 🛠️ 技术栈
 
 ### 前端技术
-- **框架**: Flutter Web 3.0+
-- **状态管理**: Riverpod
-- **路由管理**: GoRouter
-- **UI组件**: Material Design 3
-- **HTTP客户端**: Dio
-- **本地存储**: Shared Preferences
+- **框架**: React 18 + TypeScript
+- **构建工具**: Vite
+- **样式方案**: Tailwind CSS
+- **路由管理**: React Router DOM
+- **状态管理**: Zustand
+- **HTTP客户端**: Axios
+- **图标库**: Lucide React
+- **加密工具**: Crypto-JS
 
 ### 后端技术
 - **框架**: Python + FastAPI
@@ -108,34 +110,44 @@
 
 ## 🏗️ 项目架构
 
-### 前端架构 (Flutter Web)
+### 前端架构 (React + Vite)
 ```
 frontend/
-├── lib/
-│   ├── pages/              # 页面组件
-│   │   ├── auth/          # 认证页面
-│   │   └── trips/         # 行程管理页面
-│   │       ├── trip_map_page.dart    # 行程地图页面
-│   │       └── map_test_page.dart    # 地图测试页面
-│   ├── providers/         # 状态管理
-│   ├── services/          # API服务
-│   │   ├── amap_service.dart         # 高德地图服务
-│   │   └── api_keys_service.dart     # API密钥管理
-│   ├── models/            # 数据模型
+├── src/
 │   ├── components/        # 可复用组件
-│   └── config/            # 应用配置
-├── web/                   # Web配置
-│   ├── js/                # JavaScript桥接文件
-│   │   └── amap_bridge.js # 高德地图桥接
-│   └── index.html         # HTML入口文件
-└── pubspec.yaml          # 依赖配置
+│   │   ├── Layout.tsx    # 主布局组件
+│   │   ├── Header.tsx    # 顶部导航栏
+│   │   └── Sidebar.tsx   # 侧边栏导航
+│   ├── pages/            # 页面组件
+│   │   ├── auth/         # 认证页面
+│   │   ├── trips/        # 行程管理页面
+│   │   ├── chat/         # 聊天页面
+│   │   ├── search/       # 搜索页面
+│   │   └── settings/     # 设置页面
+│   ├── services/         # API服务
+│   │   ├── authService.ts
+│   │   ├── tripService.ts
+│   │   ├── llmService.ts
+│   │   └── userService.ts
+│   ├── stores/           # 状态管理
+│   │   └── authStore.ts
+│   ├── types/            # TypeScript类型定义
+│   │   └── index.ts
+│   ├── App.tsx           # 主应用组件
+│   ├── main.tsx          # 应用入口
+│   └── index.css         # 全局样式
+├── package.json          # 项目依赖
+├── vite.config.ts        # Vite配置
+├── tsconfig.json         # TypeScript配置
+├── tailwind.config.js    # Tailwind CSS配置
+└── index.html            # HTML入口
 ```
 
 ### 后端架构 (FastAPI)
 ```
 backend/
 ├── app/
-│   ├── routers/           # API路由
+│   ├── routers/          # API路由
 │   ├── models/           # 数据模型
 │   ├── schemas/          # Pydantic模型
 │   ├── auth.py           # 认证逻辑
@@ -161,7 +173,7 @@ backend/
 
 ### 环境要求
 - Python 3.9+
-- Flutter 3.0+ (Web支持)
+- Node.js 16+
 - uv (Python包管理器)
 
 ### 后端启动
@@ -173,7 +185,8 @@ uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ### 前端启动
 ```bash
 cd frontend
-flutter run -d chrome --debug
+npm install
+npm run dev
 ```
 
 ## 🐳 Docker部署
@@ -325,12 +338,16 @@ curl http://localhost:8080/health
 
 | 环境 | 启动方式 | 特点 |
 |------|----------|------|
-| 开发环境 | `cd backend && uv run uvicorn...` + `cd frontend && flutter run` | 热重载、调试模式 |
+| 开发环境 | `cd backend && uv run uvicorn...` + `cd frontend && npm run dev` | 热重载、调试模式 |
 | 生产环境 | Docker容器 | 优化性能、安全配置、持久化存储 |
 
 ### 一键启动开发环境
 ```bash
-./start_dev.sh
+# 启动后端服务
+cd backend && uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# 启动前端服务（新终端）
+cd frontend && npm run dev
 ```
 
 ## ⚙️ 配置说明
@@ -361,10 +378,10 @@ API密钥为空时相关服务不可用，但不影响其他服务的使用。
 - **错误处理**: 完善的错误提示和恢复机制
 
 ### 3. 技术架构先进
-- **现代化技术栈**: Flutter Web + FastAPI组合
+- **现代化技术栈**: React + FastAPI组合
 - **模块化设计**: 清晰的代码结构和职责分离
-- **状态管理**: Riverpod提供可预测的状态管理
-- **类型安全**: 强类型语言确保代码质量
+- **状态管理**: Zustand提供轻量级状态管理
+- **类型安全**: TypeScript确保代码质量
 
 ### 4. 扩展性强
 - **插件化架构**: 易于添加新的AI服务
@@ -420,21 +437,13 @@ API密钥为空时相关服务不可用，但不影响其他服务的使用。
 
 ### 高德地图集成
 
-项目已成功集成高德地图API，支持以下功能：
+项目计划集成高德地图API，支持以下功能：
 
-#### 已实现功能
-- ✅ **基础地图显示**: 在Flutter Web中显示高德地图
-- ✅ **国家/地区定位**: 根据行程活动中的国家代码自动定位到对应国家
-- ✅ **多国家支持**: 支持20+主要旅行目的国家的地图显示
-- ✅ **地图控制**: 清除标记、清除路线等基本操作
-- ✅ **错误处理**: 完善的错误提示和重试机制
-
-#### 支持的国家/地区
-- 亚洲: 中国、日本、韩国、泰国、新加坡、马来西亚、印度尼西亚、越南、菲律宾、印度
-- 欧洲: 英国、法国、德国、意大利、西班牙
-- 美洲: 美国、加拿大、巴西
-- 大洋洲: 澳大利亚
-- 其他: 俄罗斯
+#### 规划功能
+- ⏳ **基础地图显示**: 在React应用中显示高德地图
+- ⏳ **地点标记**: 标记行程中的关键地点
+- ⏳ **路线规划**: 显示旅行路线和导航
+- ⏳ **多国家支持**: 支持主要旅行目的国家的地图显示
 
 #### 配置步骤
 
@@ -451,23 +460,16 @@ API密钥为空时相关服务不可用，但不影响其他服务的使用。
 
 3. **使用地图功能**
    - 在行程详情页面查看地图
-   - 系统会根据行程活动的国家代码自动显示对应国家地图
+   - 系统会根据行程活动的地点信息显示地图
    - 使用地图控制面板进行基本操作
 
 #### 技术实现
 
-地图功能通过JavaScript桥接实现：
-- **前端**: Flutter Web + JavaScript互操作
+地图功能将通过以下方式实现：
+- **前端**: React + 高德地图JavaScript API
 - **地图服务**: 高德地图Web API v2.0
-- **桥接文件**: `web/js/amap_bridge.js`
-- **服务类**: `AMapService` 封装地图操作
-
-#### 测试地图功能
-
-项目提供了地图测试页面，可以验证地图功能是否正常工作：
-- 访问地图测试页面
-- 选择不同国家查看地图显示
-- 测试地图控制功能
+- **组件化**: 可复用的地图组件
+- **状态管理**: 与Zustand状态管理集成
 
 ---
 
