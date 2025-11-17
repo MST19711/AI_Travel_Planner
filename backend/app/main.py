@@ -27,10 +27,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 包含路由
-app.include_router(auth.router)
-app.include_router(users.router)
-app.include_router(trips.router)
+# 包含路由（添加/api前缀）
+app.include_router(auth.router, prefix="/api")
+app.include_router(users.router, prefix="/api")
+app.include_router(trips.router, prefix="/api")
 
 @app.get("/")
 async def root():

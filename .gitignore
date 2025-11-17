@@ -10,7 +10,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+
 lib64/
 parts/
 svelte/
@@ -138,3 +138,6 @@ ai-travel-planner.tar.gz
 # Docker volumes (data directories)
 data/
 volumes/
+
+# node
+node_modules/
