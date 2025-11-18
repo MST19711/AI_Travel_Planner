@@ -15,14 +15,13 @@ export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => ({
       isAuthenticated: false,
-      isLoading: true,
+      isLoading: true,  // 初始设置为true，等待状态恢复
       token: null,
       user: null,
 
       login: async (token: string, user: User) => {
   try {
-    // 对于不安全的登录方式，直接设置认证状态，不进行token验证
-    // 因为验证接口可能尚未实现或存在网络问题
+    // 设置认证状态
     set({
       isAuthenticated: true,
       token,
@@ -52,7 +51,7 @@ export const useAuthStore = create<AuthStore>()(
           user: null,
           isLoading: false,
         })
-// 同时清除localStorage中的token
+// 清除localStorage中的token
 localStorage.removeItem('token')
         localStorage.removeItem('access_token')
       },
@@ -62,37 +61,17 @@ localStorage.removeItem('token')
 
   console.log('checkAuth called, token from zustand:', token, 'user:', user)
 
-  // 如果zustand中没有token，尝试从localStorage恢复
-  let actualToken = token
-  if (!actualToken) {
-    actualToken =
-        localStorage.getItem('token') || localStorage.getItem('access_token')
-    console.log('Token from localStorage:', actualToken)
-
-    if (actualToken) {
-      // 从localStorage恢复状态
-      const savedUser = localStorage.getItem('user')
-      const userData = savedUser ? JSON.parse(savedUser) : null
-
-      set({
-        isAuthenticated: true,
-        token: actualToken,
-        user: userData || user,
-        isLoading: false,
-      })
-      console.log('Restored auth state from localStorage')
-    }
-  }
-
-  if (!actualToken || !user) {
+  // 如果没有token或用户信息，设置为未认证状态
+  if (!token || !user) {
     console.log('No token or user found, setting isLoading to false')
     set({isLoading: false})
     return
   }
 
+  // 验证token有效性
   try {
     console.log('Verifying token with backend...')
-    const isValid = await authService.verifyToken(actualToken)
+    const isValid = await authService.verifyToken(token)
     console.log('Token verification result:', isValid)
     if (!isValid) {
       console.log('Token is invalid, logging out')
@@ -100,6 +79,9 @@ localStorage.removeItem('token')
     }
     else {
       console.log('Token is valid, user remains authenticated')
+      // 确保localStorage中也有token
+      localStorage.setItem('token', token)
+      localStorage.setItem('access_token', token)
     }
   } catch (error) {
     console.log('Token verification failed:', error)
@@ -119,11 +101,36 @@ localStorage.removeItem('token')
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({
-        isAuthenticated: state.isAuthenticated,
-        token: state.token,
-        user: state.user,
-      } as any),
+      // 不使用partialize，让Zustand持久化所有状态
+      onRehydrateStorage: () => (state, error) => {
+  console.log('Zustand rehydrating auth state:', state)
+  if (error) {
+    console.error('Zustand rehydration error:', error)
+    return
+  }
+
+  // 当状态从localStorage恢复后，确保token也设置到localStorage中供axios使用
+  if (state?.token && state?.user) {
+    console.log('Setting token to localStorage:', state.token)
+    localStorage.setItem('token', state.token)
+    localStorage.setItem('access_token', state.token)
+
+    // 确保isAuthenticated被正确设置
+    if (!state.isAuthenticated) {
+      console.log('Fixing isAuthenticated flag')
+      // 在下一个tick中更新状态
+      setTimeout(() => {
+        const currentState = useAuthStore.getState()
+        if (currentState.token && currentState.user &&
+            !currentState.isAuthenticated) {
+          useAuthStore.setState({isAuthenticated: true})
+        }
+      }, 0)
+    }
+  } else {
+    console.log('No token or user found in rehydrated state')
+  }
+      },
     }
   )
 )

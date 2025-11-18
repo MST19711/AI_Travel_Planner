@@ -70,13 +70,15 @@ export const authService = {
   async verifyToken(token: string): Promise<boolean> {
   try {
     const response =
-        await api.get<ApiResponse<{valid: boolean}>>('/auth/verify', {
+        await api.get<{valid: boolean; username: string}>('/auth/verify', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
-    return response.data.data?.valid || false
+    // 后端直接返回 {valid: boolean, username: string}，不是ApiResponse格式
+    return response.data.valid || false
   } catch (error) {
+    console.error('Token verification error:', error)
     return false
   }
   },

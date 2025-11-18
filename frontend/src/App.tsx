@@ -15,22 +15,24 @@ import SearchPage from './pages/search/SearchPage'
 function App() {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore()
 
-  // 添加调试日志和localStorage检查
-  useEffect(() => {
-    console.log('App mounted - checking localStorage...')
-    const authStorage = localStorage.getItem('auth-storage')
-    console.log('auth-storage in localStorage:', authStorage)
-    const token = localStorage.getItem('token')
-    console.log('token in localStorage:', token)
-  }, [])
-
   // 添加调试日志
-  console.log('App rendered - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading)
+  console.log('App render - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading)
 
   // 应用启动时检查认证状态
   useEffect(() => {
-    console.log('App useEffect - checking auth...')
-    checkAuth()
+    console.log('App mounted - initializing auth check...')
+    const authStorage = localStorage.getItem('auth-storage')
+    const token = localStorage.getItem('token')
+    console.log('auth-storage in localStorage:', authStorage)
+    console.log('token in localStorage:', token)
+    
+    // 延迟执行checkAuth，确保Zustand持久化完成
+    const timer = setTimeout(() => {
+      console.log('App useEffect - checking auth...')
+      checkAuth()
+    }, 300)  // 增加延迟时间，确保Zustand完全恢复
+    
+    return () => clearTimeout(timer)
   }, [checkAuth])
 
   if (isLoading) {
