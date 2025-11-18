@@ -1,3 +1,6 @@
+// 导入leaflet-routing-machine的CSS样式
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+
 import L from 'leaflet';
 
 import {MapLocation, MapMarker} from '../types';
@@ -6,7 +9,7 @@ import {MapLocation, MapMarker} from '../types';
 let leafletRoutingMachine: any = null;
 const loadRoutingMachine = async () => {
   if (!leafletRoutingMachine) {
-    await import('leaflet-routing-machine');
+    leafletRoutingMachine = await import('leaflet-routing-machine');
   }
   return leafletRoutingMachine;
 };
@@ -332,6 +335,27 @@ class LeafletService {
     this.selectedMarkers = [];
   }
 
+  // 清除路线
+  clearRoute(): void {
+    if (this.mapInstance) {
+      try {
+        // 清除手动绘制的路线图层
+        if ((this.mapInstance as any)._routeLayer) {
+          this.mapInstance.removeLayer((this.mapInstance as any)._routeLayer);
+          (this.mapInstance as any)._routeLayer = null;
+        }
+
+        // 清除路由控制
+        if (this.routingControl) {
+          this.mapInstance.removeControl(this.routingControl);
+          this.routingControl = null;
+        }
+      } catch (e) {
+        console.warn('移除路线控制时出错:', e);
+      }
+    }
+  }
+
   // 获取选中的地点
   getSelectedLocations(): MapMarker[] {
     return this.selectedMarkers;
@@ -352,35 +376,57 @@ class LeafletService {
       // 动态导入leaflet-routing-machine
       await loadRoutingMachine();
 
-      // 清除之前的路线
-      if (this.routingControl) {
-        this.mapInstance.removeControl(this.routingControl);
+      // 清除之前的路线，但保留地图状态
+      this.clearRoute();
+
+      // 确保地图实例存在且有效
+      if (!this.mapInstance) {
+        throw new Error('地图未初始化');
       }
 
       // 转换坐标格式 [lng, lat] -> [lat, lng]
       const latLngWaypoints =
           waypoints.map(point => L.latLng(point.lat, point.lng));
 
-      // 创建路线控制
+      console.log('开始创建路线控制，途经点:', latLngWaypoints);
+
+      // 创建路线控制 - 启用路线显示，修复显示问题
       this.routingControl =
           (L as any)
               .Routing
               .control({
                 waypoints: latLngWaypoints,
-                routeWhileDragging: false,
-                addWaypoints: false,
-                createMarker: () => null,  // 不自动创建标记，我们自己管理
                 lineOptions:
-                    {styles: [{color: '#3388ff', weight: 5, opacity: 0.7}]}
+                    {styles: [{color: '#3388ff', weight: 6, opacity: 0.8}]},
+                show: true,                 // 启用路线说明面板
+                addWaypoints: false,        // 不添加途经点标记
+                routeWhileDragging: false,  // 禁用拖拽时重新规划
+                fitSelectedRoutes: true,    // 自动缩放至路线范围
+                router: (L as any).Routing.osrmv1(
+                    {serviceUrl: 'https://router.project-osrm.org/route/v1'})
               })
               .addTo(this.mapInstance);
 
+      console.log('路由控制已添加到地图，等待路线计算...');
+
       return new Promise((resolve) => {
+        let resolved = false;
+
         // 监听路线计算完成事件
         this.routingControl.on('routesfound', (e: any) => {
+          if (resolved) return;
+          resolved = true;
+
           const routes = e.routes;
+          console.log('路线计算完成事件触发，路线数据:', routes);
+
           if (routes && routes.length > 0) {
             const summary = routes[0].summary;
+
+            console.log(
+                '路线规划成功 - 距离:', summary.totalDistance,
+                '米, 时间:', summary.totalTime, '秒');
+
             resolve({
               status: 'success',
               distance: summary.totalDistance,
@@ -388,20 +434,31 @@ class LeafletService {
               steps: routes[0].waypoints
             });
           } else {
+            console.warn('未找到路线');
             resolve({status: 'error', message: '未找到路线'});
           }
         });
 
         // 监听路线计算错误事件
         this.routingControl.on('routingerror', (e: any) => {
-          resolve(
-              {status: 'error', message: '路线规划失败: ' + e.error.message});
+          if (resolved) return;
+          resolved = true;
+
+          console.error('路线规划错误:', e);
+          resolve({
+            status: 'error',
+            message: '路线规划失败: ' + (e.error?.message || '未知错误')
+          });
         });
 
         // 设置超时
         setTimeout(() => {
+          if (resolved) return;
+          resolved = true;
+
+          console.warn('路线规划超时');
           resolve({status: 'error', message: '路线规划超时'});
-        }, 10000);
+        }, 30000);
       });
     } catch (error) {
       console.error('路线规划失败:', error);

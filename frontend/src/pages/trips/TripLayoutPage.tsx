@@ -257,19 +257,45 @@ const TripLayoutPage: React.FC = () => {
     }
   }
 
-  const handleGenerateRoute = async () => {
-    if (selectedLocations.length < 2) {
-      alert('请至少选择2个地点进行路线规划')
-      return
+  const handleGenerateRoute = async (selectedLocationsForRoute?: MapMarker[]): Promise<RoutePlanResult> => {
+    const locations = selectedLocationsForRoute || selectedLocations;
+    
+    if (locations.length < 2) {
+      const errorResult: RoutePlanResult = {
+        status: 'error',
+        message: '请至少选择2个地点进行路线规划'
+      };
+      alert('请至少选择2个地点进行路线规划');
+      return errorResult;
     }
     
     setIsPlanningRoute(true)
     try {
-      const result = await leafletService.planDrivingRoute(selectedLocations)
+      console.log('开始规划路线，选中地点:', locations)
+      // 将MapLocation数组转换为路线规划需要的格式
+      const waypoints = locations.map(loc => ({
+        lng: loc.lng,
+        lat: loc.lat
+      }))
+      const result = await leafletService.planDrivingRoute(waypoints)
+      console.log('路线规划结果:', result)
       setRouteResult(result)
+      
+      if (result.status === 'success') {
+        console.log('路线规划成功，距离:', result.distance, '时间:', result.time)
+        // 路线规划成功后，地图会自动显示路线，因为leaflet-routing-machine已经添加到地图上
+      } else {
+        console.log('路线规划失败:', result.message)
+      }
+      return result;
     } catch (error) {
       console.error('路线规划失败:', error)
+      const errorResult: RoutePlanResult = {
+        status: 'error',
+        message: '路线规划失败: ' + (error as Error).message
+      };
       alert('路线规划失败，请重试')
+      return errorResult;
     } finally {
       setIsPlanningRoute(false)
     }
@@ -284,8 +310,19 @@ const TripLayoutPage: React.FC = () => {
       const results = await leafletService.searchPlaces(placeName, undefined, countryCode || undefined)
       setSearchResults(results)
       
-      // 清除现有标记
+      // 只清除搜索结果标记，保留已选择的地点标记
+      // 通过清除所有标记然后重新添加已选择的地点来保持状态
+      const currentSelectedLocations = [...selectedLocations];
       leafletService.clearMarkers()
+      
+      // 重新显示已选择的地点
+      currentSelectedLocations.forEach(loc => {
+        const location: MapLocation = {
+          lng: loc.lng,
+          lat: loc.lat
+        }
+        leafletService.addMarker(location, loc.title, loc.description || undefined, false)
+      })
       
       // 为搜索结果添加标记
       results.forEach((result: PlaceSearchResult) => {
@@ -327,8 +364,18 @@ const TripLayoutPage: React.FC = () => {
       const results = await leafletService.searchPlaces(searchKeyword, city, getFirstActivityCountryCode() || undefined)
       setSearchResults(results)
       
-      // 清除现有标记
+      // 只清除搜索结果标记，保留已选择的地点标记
+      const currentSelectedLocations = [...selectedLocations];
       leafletService.clearMarkers()
+      
+      // 重新显示已选择的地点
+      currentSelectedLocations.forEach(loc => {
+        const location: MapLocation = {
+          lng: loc.lng,
+          lat: loc.lat
+        }
+        leafletService.addMarker(location, loc.title, loc.description || undefined, false)
+      })
       
       // 为搜索结果添加标记
       results.forEach((result: PlaceSearchResult) => {
@@ -381,27 +428,14 @@ const TripLayoutPage: React.FC = () => {
     }
   }
 
-  // 清除路线
+  // 清除路线 - 只清除路线，保留选中的地点
   const handleClearRoute = () => {
     setRouteResult(null)
-    // 保存当前选中的地点，然后清空状态
-    const currentLocations = [...selectedLocations];
-    setSelectedLocations([])
-    leafletService.clearSelectedMarkers()
+    leafletService.clearRoute()
     
-    // 重新显示已选择的地点标记
-    if (currentLocations.length > 0) {
-      leafletService.clearMarkers();
-      currentLocations.forEach(loc => {
-        const location: MapLocation = {
-          lng: loc.lng,
-          lat: loc.lat
-        }
-        leafletService.addMarker(location, loc.title, loc.description || undefined, false);
-      });
-      // 恢复选中地点状态
-      setSelectedLocations(currentLocations);
-    }
+    // 不清除选中的地点，只清除路线
+    // 选中的地点标记应该继续保持显示
+    console.log('清除路线，保留选中的地点')
   }
 
   // 选择搜索结果中的地点
@@ -448,6 +482,7 @@ const TripLayoutPage: React.FC = () => {
     setSelectedLocations([])
     setRouteResult(null)
     try {
+      leafletService.clearRoute()
       leafletService.clearMarkers()
       leafletService.clearSelectedMarkers()
       
@@ -667,7 +702,9 @@ const TripLayoutPage: React.FC = () => {
               activities={selectedActivity ? [selectedActivity] : []}
               selectedActivity={selectedActivity}
               externalSelectedLocations={selectedLocations}  // 传递已选择的地点
+              externalRouteResult={routeResult}  // 传递路线规划结果
               onLocationSelected={handleLocationSelected}
+              onRequestRoutePlan={handleGenerateRoute}  // 传递路线规划回调
               height="100%"
               showControls={false}  // 禁用MapComponent的控制面板
               countryCode={getFirstActivityCountryCode()}
@@ -800,7 +837,7 @@ const TripLayoutPage: React.FC = () => {
                     {/* 导航操作按钮 */}
                     <div className="space-y-2 pt-3 border-t border-gray-200">
                       <button
-                        onClick={handleGenerateRoute}
+                        onClick={() => handleGenerateRoute()}
                         disabled={isPlanningRoute || selectedLocations.length < 2}
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3 rounded-md transition-colors disabled:bg-gray-400 text-xs"
                       >

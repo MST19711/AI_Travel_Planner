@@ -7,8 +7,10 @@ interface MapComponentProps {
   activities?: Activity[]
   selectedActivity?: Activity | null
   externalSelectedLocations?: MapMarker[]  // 新增：外部传入的已选择地点列表
+  externalRouteResult?: RoutePlanResult | null  // 新增：外部传入的路线规划结果
   onLocationSelected?: (marker: MapMarker) => void
   onRoutePlanned?: (result: RoutePlanResult) => void
+  onRequestRoutePlan?: (selectedLocations: MapMarker[]) => Promise<RoutePlanResult>  // 新增：外部请求路线规划的回调
   height?: string
   showControls?: boolean
   countryCode?: string | null  // 新增：国家代码，用于设置地图默认中心
@@ -19,8 +21,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
   activities = [],
   selectedActivity = null,
   externalSelectedLocations = [],
+  externalRouteResult = null,
   onLocationSelected,
   onRoutePlanned,
+  onRequestRoutePlan,
   height = '100%',
   showControls = true,
   countryCode = null
@@ -56,16 +60,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
     }
   }, [])
   
-  // 初始化地图
+  // 初始化地图 - 只在容器准备好且未初始化时执行
   useEffect(() => {
-    if (!containerReady) return
+    if (!containerReady || mapInitializedRef.current) return
     
     let isMounted = true
     
     const initMap = async () => {
       try {
-        if (!isMounted || mapInitializedRef.current) return
-        
         // 根据国家代码设置默认中心
         let center: [number, number] = [116.397428, 39.90923]; // 默认北京
         if (countryCode) {
@@ -107,18 +109,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
     return () => {
       isMounted = false
-      
-      // 先销毁地图，然后再重置标志
-      try {
-        leafletService.destroy()
-      } catch (error) {
-        console.error('清理地图时出错:', error)
-      }
-      
-      // 最后重置初始化标志
-      mapInitializedRef.current = false
+      // 注意：这里不销毁地图，让地图实例保持，避免重新加载
     }
-  }, [containerReady, containerId, onLocationSelected, countryCode])
+  }, [containerReady, containerId, countryCode]) // 移除 onLocationSelected 依赖
 
   // 根据活动更新地图标记
   useEffect(() => {
@@ -231,6 +224,21 @@ const MapComponent: React.FC<MapComponentProps> = ({
     setSelectedLocations(externalSelectedLocations)
   }, [isMapReady, externalSelectedLocations])
 
+  // 监听外部传入的路线结果变化，同步显示路线
+  useEffect(() => {
+    if (!isMapReady || !externalRouteResult) return
+
+    // 更新内部路线结果状态
+    setRouteResult(externalRouteResult)
+    
+    // 如果外部传入的路线结果成功，确保地图显示路线
+    if (externalRouteResult.status === 'success') {
+      console.log('外部传入路线规划成功，地图应显示路线')
+      // 确保地图保持当前视图，避免重新加载
+      // leaflet-routing-machine 会自动处理路线显示
+    }
+  }, [isMapReady, externalRouteResult])
+
   // 搜索地点
   const handleSearchPlaces = async (keyword?: string, countryCode?: string | null) => {
     const searchTerm = keyword || searchKeyword
@@ -317,9 +325,24 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
     setIsPlanningRoute(true)
     try {
-      const result = await leafletService.planDrivingRoute(selectedLocations)
+      let result: RoutePlanResult;
+      
+      // 如果有外部路线规划回调，使用外部回调
+      if (onRequestRoutePlan) {
+        result = await onRequestRoutePlan(selectedLocations);
+      } else {
+        // 否则使用内部的leafletService
+        result = await leafletService.planDrivingRoute(selectedLocations);
+      }
+      
+      // 更新路线结果状态，但保持地图当前状态
       setRouteResult(result)
       onRoutePlanned?.(result)
+      
+      // 路线规划成功后，确保地图保持当前视图
+      if (result.status === 'success') {
+        console.log('路线规划成功，保持地图状态')
+      }
     } catch (error) {
       console.error('路线规划失败:', error)
       alert('路线规划失败，请重试')
@@ -328,27 +351,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
     }
   }
 
-  // 清除路线
+  // 清除路线 - 只清除路线，保留选中的地点
   const handleClearRoute = () => {
     setRouteResult(null)
-    // 保存当前选中的地点，然后清空状态
-    const currentLocations = [...selectedLocations];
-    setSelectedLocations([])
-    leafletService.clearSelectedMarkers()
+    leafletService.clearRoute()
     
-    // 重新显示已选择的地点标记
-    if (currentLocations.length > 0) {
-      leafletService.clearMarkers();
-      currentLocations.forEach(loc => {
-        const location: MapLocation = {
-          lng: loc.lng,
-          lat: loc.lat
-        }
-        leafletService.addMarker(location, loc.title, loc.description || undefined, false);
-      });
-      // 恢复选中地点状态
-      setSelectedLocations(currentLocations);
-    }
+    // 不清除选中的地点，只清除路线
+    // 选中的地点标记应该继续保持显示
+    console.log('清除路线，保留选中的地点')
   }
 
   // 选择搜索结果中的地点
@@ -395,6 +405,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
     setSelectedLocations([])
     setRouteResult(null)
     try {
+      leafletService.clearRoute()
       leafletService.clearMarkers()
       leafletService.clearSelectedMarkers()
     } catch (error) {
