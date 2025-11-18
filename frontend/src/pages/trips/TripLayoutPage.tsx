@@ -178,9 +178,8 @@ const TripLayoutPage: React.FC = () => {
     
     // 如果活动有地址，自动触发搜索
     if (activity.location) {
-      // 清除之前的搜索结果和选中地点
+      // 只清除搜索结果，保留已选择的地点
       setSearchResults([])
-      setSelectedLocations([])
       setRouteResult(null)
       
       // 设置搜索关键词为活动地址
@@ -360,8 +359,17 @@ const TripLayoutPage: React.FC = () => {
     try {
       leafletService.clearMarkers()
       
-      // 重新显示活动标记
-      if (selectedActivity) {
+      // 重新显示已选择的地点标记
+      if (selectedLocations.length > 0) {
+        selectedLocations.forEach(loc => {
+          const location: MapLocation = {
+            lng: loc.lng,
+            lat: loc.lat
+          }
+          leafletService.addMarker(location, loc.title, loc.description || undefined, false)
+        })
+      } else if (selectedActivity) {
+        // 如果没有已选择的地点，才显示活动标记
         const location: MapLocation = {
           lng: selectedActivity.longitude || 116.397428,
           lat: selectedActivity.latitude || 39.90923

@@ -153,12 +153,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
     if (!isMapReady) return
     
     if (!selectedActivity) {
-      // 如果没有选中的活动，清除标记
-      try {
-        leafletService.clearMarkers()
-      } catch (error) {
-        console.error('清除标记失败:', error)
-      }
+      // 如果没有选中的活动，只清除搜索结果，保留已选择的地点
       setSearchResults([])
       return
     }
@@ -175,8 +170,19 @@ const MapComponent: React.FC<MapComponentProps> = ({
           )
           setSearchResults(results)
           
-          // 清除现有标记
+          // 清除搜索结果标记，但保留已选择的地点
           leafletService.clearMarkers()
+          
+          // 重新显示已选择的地点
+          if (selectedLocations.length > 0) {
+            selectedLocations.forEach(loc => {
+              const location: MapLocation = {
+                lng: loc.lng,
+                lat: loc.lat
+              }
+              leafletService.addMarker(location, loc.title, loc.description || undefined, false)
+            })
+          }
           
           // 为搜索结果添加标记
           for (const result of results) {
@@ -201,7 +207,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
       
       searchSelectedActivity()
     }
-  }, [isMapReady, selectedActivity?.id, selectedActivity?.location, selectedActivity?.countryCode])
+  }, [isMapReady, selectedActivity?.id, selectedActivity?.location, selectedActivity?.countryCode, selectedLocations])
 
   // 监听外部传入的已选择地点变化，同步地图标记
   useEffect(() => {
@@ -276,8 +282,17 @@ const MapComponent: React.FC<MapComponentProps> = ({
     try {
       leafletService.clearMarkers()
       
-      // 重新显示活动标记
-      if (activities.length) {
+      // 重新显示已选择的地点
+      if (selectedLocations.length > 0) {
+        selectedLocations.forEach(loc => {
+          const location: MapLocation = {
+            lng: loc.lng,
+            lat: loc.lat
+          }
+          leafletService.addMarker(location, loc.title, loc.description || undefined, false)
+        })
+      } else if (activities.length) {
+        // 如果没有已选择的地点，才显示活动标记
         activities.forEach(activity => {
           if (activity.location) {
             const location: MapLocation = {
