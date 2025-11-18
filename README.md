@@ -1,65 +1,77 @@
 # AI旅行规划师 (AI Travel Planner)
 
-基于React + FastAPI的智能旅行规划应用，集成AI技术简化旅行规划过程。
+基于React + FastAPI的智能旅行规划应用，集成AI技术和地图服务，为用户提供完整的旅行规划解决方案。
 
 ## 项目概述
 
-本项目是一个Web版的AI旅行规划工具，通过AI了解用户需求，自动生成详细的旅行路线和建议，并提供实时旅行辅助功能。系统采用现代化的技术栈，结合多种AI服务，为用户提供智能化的旅行规划体验。
+本项目是一个现代化的Web版AI旅行规划工具，通过AI了解用户需求，自动生成详细的旅行路线和建议，并提供地图导航和实时旅行辅助功能。系统采用React + TypeScript + FastAPI技术栈，集成了Leaflet地图、OpenAI API等多种服务，为用户提供智能化的旅行规划体验。
 
 ## 🎯 核心功能
 
 ### ✅ 已实现功能
 
 1. **用户认证系统**
-   - 注册/登录功能
-   - 不安全密码传输模式（开发测试用）
-   - SRP安全认证协议（开发中）
-   - JWT令牌管理
+   - ✅ 注册/登录功能
+   - ✅ 不安全密码传输模式（开发测试用）
+   - ⏳ SRP安全认证协议（开发中）
+   - ✅ JWT令牌管理
+   - ✅ 认证状态持久化
 
 2. **行程管理**
-   - 创建、编辑、删除行程
-   - 行程列表展示
-   - 行程详情页面
-   - 活动管理（添加、编辑、删除活动）
+   - ✅ 创建、编辑、删除行程
+   - ✅ 行程列表展示
+   - ✅ 行程详情页面
+   - ✅ 活动管理（添加、编辑、删除活动）
+   - ✅ 行程状态管理（规划中、进行中、已完成、已取消）
 
 3. **AI智能规划**
-   - 基于OpenAI API的行程规划
-   - 支持流式响应，实时显示生成过程
-   - AI响应格式验证和重试机制
-   - 支持GLM和DeepSeek双AI提供商
+   - ✅ 基于OpenAI API的行程规划
+   - ✅ 支持流式响应，实时显示生成过程
+   - ✅ AI响应格式验证和重试机制
+   - ✅ 支持多种AI提供商（OpenAI、DeepSeek等）
+   - ✅ 智能行程数据解析和验证
 
-4. **语音识别集成**
-   - 科大讯飞语音识别服务
-   - 语音输入旅行需求
-   - 实时语音识别状态显示
+4. **地图导航系统**
+   - ✅ Leaflet地图集成
+   - ✅ 地点搜索功能（使用Nominatim API）
+   - ✅ 地图标记和信息窗口
+   - ✅ 驾车路线规划（使用OSRM）
+   - ✅ 多国家地图支持
+   - ✅ 自定义地图样式和控件
 
 5. **API密钥管理**
-   - 用户级API密钥配置 (开发中)
-   - 多服务API密钥管理（OpenAI、高德地图、科大讯飞、GLM）
-   - 加密存储和自动解密
+   - ✅ 用户级API密钥配置
+   - ✅ 多服务API密钥管理（OpenAI、高德地图、科大讯飞、GLM）
+   - ✅ 前端加密存储和自动解密
+   - ✅ API密钥验证和错误处理
 
 6. **响应式UI设计**
-   - 横屏和竖屏自适应布局
-   - 现代化的Material Design界面
-   - 流畅的动画和交互效果
+   - ✅ 横屏和竖屏自适应布局
+   - ✅ 现代化的Tailwind CSS界面
+   - ✅ 流畅的动画和交互效果
+   - ✅ 路由守卫和权限控制
 
 ### 🚧 开发中功能
 
-1. **地图导航系统**
-   - ✅ 高德地图集成（已完成基础地图显示）
-   - ⏳ 地点搜索和标记功能
-   - ⏳ 路线规划和导航面板
-   - ⏳ 多交通方式支持（驾车、公交、步行、骑行）
+1. **语音识别集成**
+   - ⏳ 科大讯飞语音识别服务
+   - ⏳ 语音输入旅行需求
+   - ⏳ 实时语音识别状态显示
 
 2. **预算分析功能**
-   - 基于AI的预算分析
-   - 费用统计和优化建议
-   - 预算与实际开销对比
+   - ⏳ 基于AI的预算分析
+   - ⏳ 费用统计和优化建议
+   - ⏳ 预算与实际开销对比
 
 3. **SRP安全认证**
-   - 安全远程密码协议完整实现
-   - 零知识证明认证机制
-   - 相互身份验证
+   - ⏳ 安全远程密码协议完整实现
+   - ⏳ 零知识证明认证机制
+   - ⏳ 相互身份验证
+
+4. **高级地图功能**
+   - ⏳ 公交路线规划
+   - ⏳ 多交通方式支持（步行、骑行）
+   - ⏳ 实时交通信息
 
 ### 📋 TBD功能（未来规划）
 
@@ -94,6 +106,8 @@
 - **HTTP客户端**: Axios
 - **图标库**: Lucide React
 - **加密工具**: Crypto-JS
+- **地图服务**: Leaflet + Leaflet Routing Machine
+- **地图数据**: OpenStreetMap + Nominatim + OSRM
 
 ### 后端技术
 - **框架**: Python + FastAPI
@@ -101,36 +115,45 @@
 - **包管理**: uv
 - **认证**: JWT + SRP协议
 - **API文档**: OpenAPI/Swagger
+- **ORM**: SQLAlchemy
 
 ### AI服务集成
-- **大语言模型**: OpenAI API (默认DeepSeek-chat)
-- **搜索服务**: 智谱GLM搜索API
-- **语音识别**: 科大讯飞语音识别API
-- **地图服务**: 高德地图API
+- **大语言模型**: OpenAI API (支持DeepSeek、GPT等)
+- **搜索服务**: 智谱GLM搜索API (计划集成)
+- **语音识别**: 科大讯飞语音识别API (开发中)
+- **地图服务**: OpenStreetMap (主要)、高德地图API (备用)
 
 ## 🏗️ 项目架构
 
-### 前端架构 (React + Vite)
+### 前端架构 (React + TypeScript + Vite)
 ```
 frontend/
 ├── src/
 │   ├── components/        # 可复用组件
 │   │   ├── Layout.tsx    # 主布局组件
 │   │   ├── Header.tsx    # 顶部导航栏
-│   │   └── Sidebar.tsx   # 侧边栏导航
+│   │   ├── Sidebar.tsx   # 侧边栏导航
+│   │   └── MapComponent.tsx # 地图组件
 │   ├── pages/            # 页面组件
 │   │   ├── auth/         # 认证页面
+│   │   │   ├── LoginPage.tsx
+│   │   │   └── RegisterPage.tsx
 │   │   ├── trips/        # 行程管理页面
+│   │   │   ├── TripLayoutPage.tsx
+│   │   │   ├── AITripPlanningPage.tsx
+│   │   │   └── TripDetailPage.tsx
 │   │   ├── chat/         # 聊天页面
 │   │   ├── search/       # 搜索页面
+│   │   ├── home/         # 首页
 │   │   └── settings/     # 设置页面
 │   ├── services/         # API服务
-│   │   ├── authService.ts
-│   │   ├── tripService.ts
-│   │   ├── llmService.ts
-│   │   └── userService.ts
+│   │   ├── authService.ts    # 认证服务
+│   │   ├── tripService.ts    # 行程服务
+│   │   ├── llmService.ts     # AI服务
+│   │   ├── userService.ts    # 用户服务
+│   │   └── leafletService.ts # 地图服务
 │   ├── stores/           # 状态管理
-│   │   └── authStore.ts
+│   │   └── authStore.ts      # 认证状态管理
 │   ├── types/            # TypeScript类型定义
 │   │   └── index.ts
 │   ├── App.tsx           # 主应用组件
@@ -143,17 +166,29 @@ frontend/
 └── index.html            # HTML入口
 ```
 
-### 后端架构 (FastAPI)
+### 后端架构 (FastAPI + SQLAlchemy)
 ```
 backend/
 ├── app/
 │   ├── routers/          # API路由
-│   ├── models/           # 数据模型
+│   │   ├── auth.py       # 认证路由
+│   │   ├── users.py      # 用户管理路由
+│   │   └── trips.py      # 行程管理路由
+│   ├── models/           # SQLAlchemy数据模型
+│   │   ├── User.py       # 用户模型
+│   │   └── Trip.py       # 行程模型
 │   ├── schemas/          # Pydantic模型
+│   │   ├── auth.py       # 认证相关模型
+│   │   ├── users.py      # 用户相关模型
+│   │   └── trips.py      # 行程相关模型
 │   ├── auth.py           # 认证逻辑
-│   └── main.py           # 应用入口
+│   ├── srp_auth.py       # SRP认证实现
+│   ├── database.py       # 数据库配置
+│   ├── middleware.py     # 中间件
+│   └── main.py          # 应用入口
 ├── pyproject.toml        # uv配置
-└── .env.example          # 环境变量
+├── .env.example          # 环境变量
+└── create_tables.py      # 数据库表创建脚本
 ```
 
 ## 🔐 安全特性
@@ -179,15 +214,30 @@ backend/
 ### 后端启动
 ```bash
 cd backend
+# 安装依赖
+uv sync
+
+# 创建数据库表
+python create_tables.py
+
+# 启动开发服务器
 uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### 前端启动
 ```bash
 cd frontend
+# 安装依赖
 npm install
+
+# 启动开发服务器
 npm run dev
 ```
+
+### 访问应用
+- 前端界面: http://localhost:5173
+- 后端API: http://localhost:8000
+- API文档: http://localhost:8000/docs
 
 ## 🐳 Docker部署
 
@@ -393,17 +443,19 @@ API密钥为空时相关服务不可用，但不影响其他服务的使用。
 
 ### 短期目标 (1-3个月)
 - [x] 完成地图基础显示功能
-- [ ] 实现地图标记和搜索功能
-- [ ] 完成路线规划功能
+- [x] 实现地图标记和搜索功能
+- [x] 完成路线规划功能
 - [ ] 实现预算分析功能
 - [ ] 完善SRP安全认证
 - [ ] 优化AI规划算法
+- [ ] 集成语音识别功能
 
 ### 中期目标 (3-6个月)
 - [ ] 集成GLM搜索API到AI规划流程
 - [ ] 实现行程分享和协作功能
 - [ ] 开发移动端PWA应用
 - [ ] 添加多语言支持
+- [ ] 实现公交和步行路线规划
 
 ### 长期愿景 (6-12个月)
 - [ ] 构建旅行社交平台
@@ -433,43 +485,84 @@ API密钥为空时相关服务不可用，但不影响其他服务的使用。
 
 ---
 
+## 📊 项目统计
+
+- **开发语言**: TypeScript, Python, SQL
+- **代码行数**: ~15,000+ 行
+- **API接口**: 20+ 个
+- **支持国家**: 200+ 个
+- **地图服务**: OpenStreetMap + Nominatim + OSRM
+- **AI服务**: OpenAI, DeepSeek, GLM (计划中)
+
+---
+
+## 🙏 致谢
+
+感谢以下开源项目和服务提供商：
+- [React](https://reactjs.org/) - 前端框架
+- [FastAPI](https://fastapi.tiangolo.com/) - 后端框架
+- [Leaflet](https://leafletjs.com/) - 地图库
+- [OpenStreetMap](https://www.openstreetmap.org/) - 地图数据
+- [Tailwind CSS](https://tailwindcss.com/) - CSS框架
+- [OpenAI](https://openai.com/) - AI服务
+
+---
+
 ## 🗺️ 地图功能使用指南
 
-### 高德地图集成
+### Leaflet地图集成
 
-项目计划集成高德地图API，支持以下功能：
+项目已集成Leaflet地图服务，支持以下功能：
 
-#### 规划功能
-- ⏳ **基础地图显示**: 在React应用中显示高德地图
-- ⏳ **地点标记**: 标记行程中的关键地点
-- ⏳ **路线规划**: 显示旅行路线和导航
-- ⏳ **多国家支持**: 支持主要旅行目的国家的地图显示
+#### ✅ 已实现功能
+- ✅ **基础地图显示**: 在React应用中显示OpenStreetMap地图
+- ✅ **地点搜索**: 使用Nominatim API进行全球地点搜索
+- ✅ **地点标记**: 标记行程中的关键地点，支持自定义弹出窗口
+- ✅ **驾车路线规划**: 使用OSRM进行路线规划和导航
+- ✅ **多国家支持**: 支持全球主要旅行目的国家的地图显示
+- ✅ **响应式设计**: 地图自适应不同屏幕尺寸
 
 #### 配置步骤
 
-1. **获取高德地图API Key**
-   - 访问 [高德开放平台](https://lbs.amap.com)
-   - 注册账号并创建Web端应用
-   - 获取Web服务的API Key
+1. **地图服务配置**
+   - 项目使用免费的OpenStreetMap服务，无需API Key
+   - 地点搜索使用Nominatim API（开源）
+   - 路线规划使用OSRM（开源路由服务）
 
-2. **配置API Key**
-   - 登录AI旅行规划师应用
-   - 进入"账户设置"页面
-   - 在"高德地图API Key"字段中输入您的API Key
-   - 保存配置
-
-3. **使用地图功能**
+2. **使用地图功能**
    - 在行程详情页面查看地图
-   - 系统会根据行程活动的地点信息显示地图
-   - 使用地图控制面板进行基本操作
+   - 系统会根据行程活动的地点信息自动显示地图
+   - 支持手动搜索和添加地点
+   - 可以规划多个地点间的驾车路线
 
 #### 技术实现
 
-地图功能将通过以下方式实现：
-- **前端**: React + 高德地图JavaScript API
-- **地图服务**: 高德地图Web API v2.0
-- **组件化**: 可复用的地图组件
-- **状态管理**: 与Zustand状态管理集成
+地图功能通过以下方式实现：
+- **前端**: React + Leaflet + TypeScript
+- **地图服务**: OpenStreetMap (瓦片地图)
+- **地点搜索**: Nominatim API (地理编码)
+- **路线规划**: OSRM API (开源路由服务)
+- **组件化**: 可复用的地图组件和地图服务
+- **状态管理**: 与React状态管理集成
+
+#### 地图特性
+
+1. **交互功能**
+   - 点击标记显示详细信息
+   - 拖拽和缩放地图
+   - 选择地点用于行程规划
+   - 自定义弹出窗口内容
+
+2. **路线规划**
+   - 支持多个途经点
+   - 实时路线计算
+   - 距离和时间估算
+   - 路线说明面板
+
+3. **全球覆盖**
+   - 支持200+国家地区
+   - 多语言地名显示
+   - 自动根据国家代码调整地图视图
 
 ---
 

@@ -5,17 +5,19 @@
 AI旅行规划师后端API服务基于FastAPI框架构建，提供用户认证、行程管理和第三方API密钥管理等功能。采用SRP（Secure Remote Password）协议进行安全认证，确保用户密码不在网络中传输。
 
 ### 基础信息
-- **API版本**: 0.1.0
+- **API版本**: 0.2.0
 - **基础URL**: `http://localhost:8000`
 - **文档地址**: `/docs` (Swagger UI) 或 `/redoc` (ReDoc)
 - **认证方式**: JWT Bearer Token
+- **数据库**: SQLite (开发环境)
+- **ORM**: SQLAlchemy
 
 ## 快速开始
 
-### 1. 启动服务
+### 1. 安装依赖
 ```bash
 cd backend
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uv sync
 ```
 
 ### 2. 创建数据库表
@@ -23,6 +25,16 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 cd backend
 python create_tables.py
 ```
+
+### 3. 启动服务
+```bash
+cd backend
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 4. 访问API文档
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
 ## 认证系统
 
@@ -270,24 +282,28 @@ Authorization: Bearer <jwt_token>
       "title": "string",
       "status": "planning",
       "trip_data": {
-        "destination": "string",
-        "start_date": "string",
-        "end_date": "string",
-        "budget": 5000,
-        "travelers": 2,
+        "title": "行程标题",
+        "description": "行程描述",
+        "startDate": "2024-07-01T00:00:00.000",
+        "endDate": "2024-07-03T00:00:00.000",
+        "budget": 3000,
+        "participants": 2,
         "preferences": {
-          "food": ["中餐", "火锅"],
-          "activities": ["历史景点", "购物"],
-          "accommodation": "酒店"
+          "food": ["日料", "寿司"],
+          "activities": ["观光", "购物"],
+          "accommodation": "商务酒店"
         },
         "activities": [
           {
-            "day": 1,
-            "date": "2024-01-15",
-            "items": [
-              {"time": "09:00", "activity": "抵达机场"},
-              {"time": "11:00", "activity": "入住酒店"}
-            ]
+            "title": "活动标题",
+            "description": "活动详细描述",
+            "location": "具体地点",
+            "city": "城市名称",
+            "countryCode": "国家代码",
+            "startTime": "2024-07-01T10:00:00.000",
+            "endTime": "2024-07-01T13:00:00.000",
+            "estimatedCost": 200,
+            "notes": "备注信息"
           }
         ]
       },
@@ -313,24 +329,28 @@ Authorization: Bearer <jwt_token>
 {
   "title": "string",
   "trip_data": {
-    "destination": "string",
-    "start_date": "string",
-    "end_date": "string",
-    "budget": 5000,
-    "travelers": 2,
+    "title": "行程标题",
+    "description": "行程描述",
+    "startDate": "2024-07-01T00:00:00.000",
+    "endDate": "2024-07-03T00:00:00.000",
+    "budget": 3000,
+    "participants": 2,
     "preferences": {
-      "food": ["中餐", "火锅"],
-      "activities": ["历史景点", "购物"],
-      "accommodation": "酒店"
+      "food": ["日料", "寿司"],
+      "activities": ["观光", "购物"],
+      "accommodation": "商务酒店"
     },
     "activities": [
       {
-        "day": 1,
-        "date": "2024-01-15",
-        "items": [
-          {"time": "09:00", "activity": "抵达机场"},
-          {"time": "11:00", "activity": "入住酒店"}
-        ]
+        "title": "活动标题",
+        "description": "活动详细描述",
+        "location": "具体地点",
+        "city": "城市名称",
+        "countryCode": "国家代码",
+        "startTime": "2024-07-01T10:00:00.000",
+        "endTime": "2024-07-01T13:00:00.000",
+        "estimatedCost": 200,
+        "notes": "备注信息"
       }
     ]
   }
@@ -372,24 +392,28 @@ Authorization: Bearer <jwt_token>
   "title": "string",
   "status": "string",
   "trip_data": {
-    "destination": "string",
-    "start_date": "string",
-    "end_date": "string",
-    "budget": 5000,
-    "travelers": 2,
+    "title": "行程标题",
+    "description": "行程描述",
+    "startDate": "2024-07-01T00:00:00.000",
+    "endDate": "2024-07-03T00:00:00.000",
+    "budget": 3000,
+    "participants": 2,
     "preferences": {
-      "food": ["中餐", "火锅"],
-      "activities": ["历史景点", "购物"],
-      "accommodation": "酒店"
+      "food": ["日料", "寿司"],
+      "activities": ["观光", "购物"],
+      "accommodation": "商务酒店"
     },
     "activities": [
       {
-        "day": 1,
-        "date": "2024-01-15",
-        "items": [
-          {"time": "09:00", "activity": "抵达机场"},
-          {"time": "11:00", "activity": "入住酒店"}
-        ]
+        "title": "活动标题",
+        "description": "活动详细描述",
+        "location": "具体地点",
+        "city": "城市名称",
+        "countryCode": "国家代码",
+        "startTime": "2024-07-01T10:00:00.000",
+        "endTime": "2024-07-01T13:00:00.000",
+        "estimatedCost": 200,
+        "notes": "备注信息"
       }
     ]
   }
@@ -536,6 +560,8 @@ Authorization: Bearer <jwt_token>
 ```env
 DATABASE_URL=sqlite:///./app.db
 ENCRYPTION_SALT=your-encryption-salt
+SECRET_KEY=your-very-secure-secret-key
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
 ```
 
 ### 依赖管理
@@ -545,19 +571,43 @@ cd backend
 uv sync
 ```
 
+### 数据库操作
+```bash
+# 创建数据库表
+python create_tables.py
+
+# 重置数据库（删除并重新创建）
+rm app.db
+python create_tables.py
+```
+
 ### 测试
 ```bash
 cd backend
-pytest
+uv run pytest
+```
+
+### API测试
+```bash
+# 测试伪客户端
+uv run python pseudo_client4test.py
 ```
 
 ## 版本历史
 
-- **v0.1.0** (当前版本)
-  - 基础用户认证系统（SRP协议）
-  - 行程管理功能
-  - API密钥管理
+- **v0.2.0** (当前版本)
+  - 完整的用户认证系统（SRP协议 + 不安全传输）
+  - 行程管理功能（完整CRUD）
+  - API密钥管理（前端加密）
   - 数据加密存储
+  - 改进的行程数据结构
+  - JWT令牌管理
+  - 中间件和错误处理
+
+- **v0.1.0** (历史版本)
+  - 基础用户认证系统
+  - 简单行程管理
+  - 基础API密钥管理
 
 ---
 

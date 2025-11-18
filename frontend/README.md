@@ -1,6 +1,6 @@
-# AI旅行规划师 - 原生Web前端
+# AI旅行规划师 - React前端
 
-这是一个基于React + TypeScript + Vite构建的AI旅行规划师Web前端应用，替代了原有的Flutter前端。
+这是一个基于React + TypeScript + Vite构建的AI旅行规划师Web前端应用，提供完整的旅行规划功能，包括地图导航、AI智能规划和用户管理。
 
 ## 项目结构
 
@@ -10,7 +10,8 @@ frontend/
 │   ├── components/          # 可复用组件
 │   │   ├── Layout.tsx      # 主布局组件
 │   │   ├── Header.tsx      # 顶部导航栏
-│   │   └── Sidebar.tsx     # 侧边栏导航
+│   │   ├── Sidebar.tsx     # 侧边栏导航
+│   │   └── MapComponent.tsx # 地图组件
 │   ├── pages/              # 页面组件
 │   │   ├── auth/           # 认证相关页面
 │   │   │   ├── LoginPage.tsx
@@ -18,9 +19,9 @@ frontend/
 │   │   ├── home/           # 首页
 │   │   │   └── HomePage.tsx
 │   │   ├── trips/          # 行程管理页面
-│   │   │   ├── TripDetailPage.tsx
-│   │   │   ├── TripMapPage.tsx
-│   │   │   └── AITripPlanningPage.tsx
+│   │   │   ├── TripLayoutPage.tsx    # 行程布局页面
+│   │   │   ├── TripDetailPage.tsx    # 行程详情页面
+│   │   │   └── AITripPlanningPage.tsx # AI行程规划页面
 │   │   ├── chat/           # 聊天页面
 │   │   │   └── ChatPage.tsx
 │   │   ├── search/         # 搜索页面
@@ -29,7 +30,11 @@ frontend/
 │   │       ├── SettingsPage.tsx
 │   │       └── ApiKeysPage.tsx
 │   ├── services/           # API服务
-│   │   └── authService.ts  # 认证服务
+│   │   ├── authService.ts    # 认证服务
+│   │   ├── tripService.ts    # 行程服务
+│   │   ├── llmService.ts     # AI服务
+│   │   ├── userService.ts    # 用户服务
+│   │   └── leafletService.ts # 地图服务
 │   ├── stores/             # 状态管理
 │   │   └── authStore.ts    # 认证状态管理
 │   ├── types/              # TypeScript类型定义
@@ -40,7 +45,9 @@ frontend/
 ├── package.json            # 项目依赖
 ├── vite.config.ts          # Vite配置
 ├── tsconfig.json           # TypeScript配置
+├── tsconfig.node.json      # Node.js TypeScript配置
 ├── tailwind.config.js      # Tailwind CSS配置
+├── postcss.config.js       # PostCSS配置
 └── index.html              # HTML入口
 ```
 
@@ -60,45 +67,57 @@ frontend/
 ### ✅ 已实现功能
 
 1. **用户认证系统**
-   - 登录/注册页面
-   - Token认证管理
-   - 路由守卫
-   - 本地存储持久化
+   - ✅ 登录/注册页面
+   - ✅ JWT Token认证管理
+   - ✅ 路由守卫和权限控制
+   - ✅ 本地存储持久化
+   - ✅ 认证状态管理
 
-2. **响应式布局**
-   - 桌面端和移动端适配
-   - 侧边栏导航
-   - 顶部导航栏
-   - 现代化UI设计
+2. **行程管理**
+   - ✅ 行程创建、编辑、删除
+   - ✅ 行程列表展示
+   - ✅ 行程详情页面
+   - ✅ 活动管理
+   - ✅ 行程状态管理
 
-3. **基础页面结构**
-   - 首页（行程概览）
-   - 登录/注册页面
-   - 设置页面
-   - API密钥配置页面
-   - 各功能模块占位页面
+3. **地图导航系统**
+   - ✅ Leaflet地图集成
+   - ✅ 地点搜索功能
+   - ✅ 地图标记和信息窗口
+   - ✅ 驾车路线规划
+   - ✅ 多国家地图支持
 
-### 🔄 待开发功能
+4. **AI智能规划**
+   - ✅ 基于OpenAI API的行程规划
+   - ✅ 流式响应和实时显示
+   - ✅ AI响应格式验证和重试
+   - ✅ 多AI提供商支持
 
-1. **行程管理**
-   - 行程创建、编辑、删除
-   - 行程详情展示
-   - 活动管理
+5. **响应式布局**
+   - ✅ 桌面端和移动端适配
+   - ✅ 侧边栏导航
+   - ✅ 顶部导航栏
+   - ✅ 现代化Tailwind CSS设计
 
-2. **地图集成**
-   - 高德地图集成
-   - 地点标记
-   - 路线规划
+6. **API集成**
+   - ✅ 后端API完全对接
+   - ✅ 实时数据同步
+   - ✅ 错误处理和用户提示
+   - ✅ API密钥管理
 
-3. **AI功能**
-   - 智能行程规划
-   - 聊天助手
-   - 智能搜索
+### 🔄 开发中功能
 
-4. **API集成**
-   - 后端API对接
-   - 实时数据同步
-   - 错误处理
+1. **语音识别集成**
+   - ⏳ 科大讯飞语音识别服务
+   - ⏳ 语音输入旅行需求
+
+2. **高级地图功能**
+   - ⏳ 公交路线规划
+   - ⏳ 多交通方式支持
+
+3. **预算分析功能**
+   - ⏳ 基于AI的预算分析
+   - ⏳ 费用统计和优化建议
 
 ## 开发指南
 
@@ -120,7 +139,7 @@ npm install
 npm run dev
 ```
 
-应用将在 http://localhost:3000 启动
+应用将在 http://localhost:5173 启动
 
 ### 构建生产版本
 
@@ -131,9 +150,24 @@ npm run build
 ### 代码检查
 
 ```bash
-npm run lint
-npm run type-check
+npm run lint        # ESLint检查
+npm run type-check  # TypeScript类型检查
 ```
+
+### 环境变量配置
+
+创建 `.env` 文件（可选）：
+```env
+VITE_API_BASE_URL=http://localhost:8000/api
+```
+
+### 开发注意事项
+
+1. **地图服务**: 使用开源地图服务，无需API密钥
+2. **AI服务**: 需要在设置页面配置OpenAI API密钥
+3. **状态管理**: 使用Zustand进行轻量级状态管理
+4. **类型安全**: 严格TypeScript配置，确保代码质量
+5. **响应式设计**: 使用Tailwind CSS实现移动端适配
 
 ## UI设计说明
 
@@ -175,22 +209,45 @@ npm run type-check
 - **生态系统**: 丰富的React生态库
 - **部署**: 更简单的Web部署流程
 
-## 下一步开发计划
+## 项目特点
 
-1. **后端API集成**
-   - 对接用户认证API
-   - 实现行程CRUD操作
-   - 集成地图服务
+### 1. 现代化技术栈
+- **React 18**: 最新的React特性，包括并发渲染
+- **TypeScript**: 严格的类型检查，提高代码质量
+- **Vite**: 快速的开发构建工具
+- **Tailwind CSS**: 实用优先的CSS框架
 
-2. **功能完善**
-   - 实现完整的行程管理
-   - 集成AI聊天功能
-   - 添加地图交互
+### 2. 完整的功能实现
+- **完整的认证流程**: 注册、登录、令牌管理
+- **地图集成**: 基于开源服务的地图功能
+- **AI集成**: 智能行程规划和流式响应
+- **响应式设计**: 完美适配各种设备
 
-3. **优化改进**
-   - 性能优化
-   - 错误处理
-   - 用户体验改进
+### 3. 优秀的开发体验
+- **热重载**: 开发时快速反馈
+- **类型安全**: TypeScript提供完整的类型提示
+- **代码规范**: ESLint和Prettier保证代码质量
+- **模块化设计**: 清晰的代码结构和职责分离
+
+### 4. 用户友好的界面
+- **现代化UI**: 基于Tailwind CSS的现代设计
+- **流畅动画**: 优雅的过渡效果和微交互
+- **直观操作**: 简单易用的用户界面
+- **错误处理**: 完善的错误提示和恢复机制
+
+## 已知问题和限制
+
+1. **地图服务**: 使用开源地图服务，在某些地区可能加载较慢
+2. **AI服务**: 需要用户自行配置API密钥
+3. **语音功能**: 语音识别功能正在开发中
+4. **离线支持**: 暂不支持离线功能
+
+## 性能优化
+
+1. **代码分割**: 使用React.lazy进行路由级别的代码分割
+2. **图片优化**: 使用WebP格式和懒加载
+3. **缓存策略**: 合理使用浏览器缓存和API缓存
+4. **构建优化**: Vite的生产构建优化
 
 ## 贡献指南
 
