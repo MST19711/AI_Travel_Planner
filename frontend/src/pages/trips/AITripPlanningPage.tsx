@@ -6,7 +6,7 @@ import { LLMConfig, AIPlanningState, LLMStreamResponse, Trip } from '../../types
 import { tripService } from '../../services/tripService'
 
 const AITripPlanningPage: React.FC = () => {
-  const { user } = useAuthStore()
+  const { user: _user } = useAuthStore()
   const [planningState, setPlanningState] = useState<AIPlanningState>({
     isGenerating: false,
     progress: 0,

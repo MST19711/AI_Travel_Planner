@@ -4,7 +4,7 @@ import { ApiKeys } from '../../types'
 import userService from '../../services/userService'
 
 const ApiKeysPage: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user: _user } = useAuthStore();
   const [apiKeys, setApiKeys] = useState<ApiKeys>({
     openaiBaseUrl: 'https://api.deepseek.com',
     openaiModel: 'deepseek-chat'
@@ -114,29 +114,19 @@ const ApiKeysPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 高德地图API */}
+          {/* 地图API说明 */}
           <div className="border border-gray-200 rounded-lg p-4">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">高德地图API</h2>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  API密钥
-                </label>
-                <input
-                  type="password"
-                  value={apiKeys.amapApiKey || ''}
-                  onChange={(e) => handleInputChange('amapApiKey', e.target.value)}
-                  placeholder="请输入高德地图API密钥"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <button
-                onClick={() => handleSave('高德地图')}
-                disabled={isLoading}
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors"
-              >
-                {isLoading ? '保存中...' : '保存配置'}
-              </button>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">地图服务</h2>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-blue-800">
+                本项目已切换至使用 <strong>Leaflet + OpenStreetMap</strong> 方案，这是一个完全免费且无需注册的地图服务。
+              </p>
+              <p className="text-blue-800 mt-2">
+                OpenStreetMap是一个由全球志愿者共同维护的免费地图项目，类似于维基百科的地图版本。
+              </p>
+              <p className="text-blue-800 mt-2">
+                无需配置任何API密钥即可使用地图的完整功能，包括地点搜索、标记和路线规划。
+              </p>
             </div>
           </div>
 

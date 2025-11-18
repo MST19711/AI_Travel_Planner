@@ -39,6 +39,7 @@ const LoginPage: React.FC = () => {
       }
 
       const response = await authService.login(formData)
+      // 确保token正确存储到zustand和localStorage
       await login(response.access_token, {
         id: 0, // 后端暂时不返回用户ID，使用默认值
         username: response.username,

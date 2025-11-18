@@ -50,8 +50,8 @@ const Sidebar: React.FC = () => {
   }
 
   return (
-    <aside className="hidden lg:block w-64 bg-white border-r border-gray-200">
-      <div className="p-6">
+    <aside className="hidden lg:block w-64 bg-white border-r border-gray-200 flex-shrink-0">
+      <div className="p-6 overflow-y-auto h-full">
         <h2 className="text-lg font-semibold text-gray-900 mb-6">导航菜单</h2>
         
         <nav className="space-y-2">

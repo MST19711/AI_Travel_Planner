@@ -5,7 +5,7 @@ import {ApiResponse, LoginRequest, LoginResponse, RegisterRequest, RegisterRespo
 const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -14,7 +14,24 @@ const api = axios.create({
 
 // 请求拦截器 - 添加token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  // 优先从zustand store获取token，如果没有则从localStorage获取
+  let token = null
+  try {
+    // 尝试从localStorage获取zustand存储的token
+    const authStorage = localStorage.getItem('auth-storage')
+    if (authStorage) {
+      const authData = JSON.parse(authStorage)
+      token = authData.state?.token || null
+    }
+    // 如果zustand中没有token，则从localStorage获取
+    if (!token) {
+      token = localStorage.getItem('token')
+    }
+  } catch (error) {
+    console.warn('获取token失败:', error)
+    token = localStorage.getItem('token')
+  }
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
