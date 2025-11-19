@@ -260,12 +260,7 @@ npm run dev
 
 2. **运行容器**
    ```bash
-   docker run -d \
-     -p 8080:80 \
-     -v ai_travel_data:/app/data \
-     -v ai_travel_logs:/var/log/nginx \
-     --name ai-travel-planner \
-     ai-travel-planner:latest
+   docker run -d -p 8080:80 --name ai-travel-planner ai-travel-planner:latest
    ```
 
 3. **访问应用**
