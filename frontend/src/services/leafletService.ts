@@ -3,7 +3,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
 import L from 'leaflet';
 
-import {ExtendedRoutePlanResult, MapLocation, MapMarker, TransitStep, TransportMode} from '../types';
+import {ExtendedRoutePlanResult, MapLocation, MapMarker, TransportMode} from '../types';
 
 // 添加自定义CSS样式来调整导航信息窗口位置
 const customRoutingStyles = `
@@ -627,8 +627,8 @@ class LeafletService {
 
   // 规划公交路线 - 功能未完善
   async planTransitRoute(
-      start: MapLocation,
-      end: MapLocation,
+      _start: MapLocation,
+      _end: MapLocation,
       ): Promise<ExtendedRoutePlanResult> {
     return {
       status: 'error',

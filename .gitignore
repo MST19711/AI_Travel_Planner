@@ -1,3 +1,7 @@
+# Docker镜像文件
+*.tar.gz
+ai-travel-planner-docker-image.tar.gz
+
 # Python
 __pycache__/
 *.py[cod]

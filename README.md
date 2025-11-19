@@ -251,8 +251,8 @@ npm run dev
 
 1. **加载预构建镜像**
    ```bash
-   # 从tar文件加载镜像
-   docker load -i ai-travel-planner.tar
+   # 从压缩文件加载镜像
+   docker load < ai-travel-planner-docker-image.tar.gz
    
    # 验证镜像加载成功
    docker images | grep ai-travel-planner
@@ -322,21 +322,20 @@ npm run dev
 
 #### 保存镜像到文件
 ```bash
-# 将镜像保存为tar文件
-docker save -o ai-travel-planner.tar ai-travel-planner:latest
+# 将镜像保存并压缩为tar.gz文件
+docker save aipt-ai-travel-planner:latest | gzip > ai-travel-planner-docker-image.tar.gz
 
-# 压缩镜像文件（可选）
-tar -czf ai-travel-planner.tar.gz ai-travel-planner.tar
+# 查看文件大小
+ls -lh ai-travel-planner-docker-image.tar.gz
 ```
 
 #### 从文件加载镜像
 ```bash
-# 从tar文件加载镜像
-docker load -i ai-travel-planner.tar
+# 从压缩文件直接加载镜像
+docker load < ai-travel-planner-docker-image.tar.gz
 
-# 如果使用压缩文件，先解压
-tar -xzf ai-travel-planner.tar.gz
-docker load -i ai-travel-planner.tar
+# 或使用gunzip
+gunzip -c ai-travel-planner-docker-image.tar.gz | docker load
 ```
 
 #### 验证镜像

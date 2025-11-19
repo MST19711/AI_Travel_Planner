@@ -1,7 +1,7 @@
 import {useAuthStore} from '../stores/authStore';
 import {ApiKeys} from '../types';
 
-import userService from './userService';
+// import userService from './userService';
 
 // 语音识别服务配置
 interface SpeechRecognitionConfig {
@@ -34,41 +34,42 @@ class SpeechRecognitionService {
   private config: SpeechRecognitionConfig|null = null;
 
   // 生成鉴权URL
-  private generateAuthUrl(): string {
-    if (!this.config) throw new Error('语音识别配置未设置');
+  // private generateAuthUrl(): string {
+  //   if (!this.config) throw new Error('语音识别配置未设置');
 
-    const host = 'iat-api.xfyun.cn';
-    const date = new Date().toUTCString();
-    const requestLine = 'GET /v2/iat HTTP/1.1';
+  //   const host = 'iat-api.xfyun.cn';
+  //   const date = new Date().toUTCString();
+  //   const requestLine = 'GET /v2/iat HTTP/1.1';
 
-    // 生成签名原始字符串
-    const signatureOrigin = `host: ${host}\ndate: ${date}\n${requestLine}`;
-    console.log('签名原始字符串:', signatureOrigin);
+  //   // 生成签名原始字符串
+  //   const signatureOrigin = `host: ${host}\ndate: ${date}\n${requestLine}`;
+  //   console.log('签名原始字符串:', signatureOrigin);
 
-    // 使用HMAC-SHA256生成签名
-    const hash = CryptoJS.HmacSHA256(signatureOrigin, this.config.apiSecret);
-    const signature = CryptoJS.enc.Base64.stringify(hash);
-    console.log('生成的签名:', signature);
+  //   // 使用HMAC-SHA256生成签名
+  //   const hash = CryptoJS.HmacSHA256(signatureOrigin, this.config.apiSecret);
+  //   const signature = CryptoJS.enc.Base64.stringify(hash);
+  //   console.log('生成的签名:', signature);
 
-    // 生成authorization原始字符串 - 确保没有换行符
-    const authorizationOrigin = `api_key="${
-        this.config
-            .apiKey}", algorithm="hmac-sha256", headers="host date request-line", signature="${
-        signature}"`;
-    console.log('Authorization原始字符串:', authorizationOrigin);
+  //   // 生成authorization原始字符串 - 确保没有换行符
+  //   const authorizationOrigin = `api_key="${
+  //       this.config
+  //           .apiKey}", algorithm="hmac-sha256", headers="host date
+  //           request-line", signature="${
+  //       signature}"`;
+  //   console.log('Authorization原始字符串:', authorizationOrigin);
 
-    // Base64编码authorization
-    const authorization = btoa(authorizationOrigin);
-    console.log('Base64编码的Authorization:', authorization);
+  //   // Base64编码authorization
+  //   const authorization = btoa(authorizationOrigin);
+  //   console.log('Base64编码的Authorization:', authorization);
 
-    // URL编码参数
-    const params = new URLSearchParams({host, date, authorization});
+  //   // URL编码参数
+  //   const params = new URLSearchParams({host, date, authorization});
 
-    const finalUrl = `wss://${host}/v2/iat?${params.toString()}`;
-    console.log('最终WebSocket URL:', finalUrl);
+  //   const finalUrl = `wss://${host}/v2/iat?${params.toString()}`;
+  //   console.log('最终WebSocket URL:', finalUrl);
 
-    return finalUrl;
-  }
+  //   return finalUrl;
+  // }
 
   // 设置配置
   setConfig(apiKeys: ApiKeys): void {
@@ -90,9 +91,9 @@ class SpeechRecognitionService {
 
     return new Promise((resolve, reject) => {
       try {
-        // 使用后端代理服务 - 直接连接到后端8000端口
+        // 使用后端代理服务 - 使用相对路径连接
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = 'localhost:8000';
+        const host = window.location.host;  // 使用当前页面的主机
         const url = `${protocol}//${host}/api/speech/recognize`;
         console.log('连接到后端语音服务:', url);
 
