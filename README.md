@@ -353,9 +353,9 @@ docker run --rm -p 8080:80 ai-travel-planner:latest
 
 ### 数据持久化
 
-容器使用数据卷确保数据安全：
-- `ai_travel_data`: 存储SQLite数据库文件
-- `ai_travel_logs`: 存储Nginx日志文件
+如果需要进行持久化确保数据安全，可以使用数据卷，在启动容器的指令中添加：
+- `-v ai_travel_data:/app/data`: 存储SQLite数据库文件
+- `-v ai_travel_logs:/var/log/nginx`: 存储Nginx日志文件
 
 ### 服务架构
 
