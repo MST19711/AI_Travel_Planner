@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+import {ROUTES} from '../config/routes'
 import {ApiResponse, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse} from '../types'
 
 const API_BASE_URL =
@@ -40,12 +41,32 @@ api.interceptors.request.use((config) => {
 
 // 响应拦截器 - 处理认证错误
 api.interceptors.response.use((response) => response, (error) => {
+  console.log('响应拦截器捕获到错误:', error)
+  console.log('错误响应数据:', error.response?.data)
+  console.log('错误状态码:', error.response?.status)
+
   if (error.response?.status === 401) {
     // Token过期或无效，清除本地存储并重定向到登录页
     localStorage.removeItem('token')
     localStorage.removeItem('user')
-    window.location.href = '/login'
+    window.location.href = ROUTES.LOGIN
   }
+
+  // 提取后端返回的错误信息
+  if (error.response?.data?.detail) {
+    error.message = error.response.data.detail
+    console.log('设置错误消息为:', error.message)
+  } else if (error.response?.data?.error) {
+    error.message = error.response.data.error
+    console.log('设置错误消息为:', error.message)
+  } else if (error.message) {
+    // 保持原有的错误消息
+    console.log('保持原有错误消息:', error.message)
+  } else {
+    error.message = '网络错误，请稍后重试'
+    console.log('设置默认错误消息:', error.message)
+  }
+
   return Promise.reject(error)
 })
 

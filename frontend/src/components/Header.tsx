@@ -1,16 +1,17 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
-import { 
-  MapPin, 
-  Search, 
-  Bell, 
-  User, 
-  Settings, 
+import {
+  MapPin,
+  Search,
+  Bell,
+  User,
+  Settings,
   LogOut,
   Menu,
   X
 } from 'lucide-react'
+import { NAV_ROUTES } from '../config/routes'
 
 const Header: React.FC = () => {
   const navigate = useNavigate()
@@ -24,15 +25,15 @@ const Header: React.FC = () => {
   }
 
   const handleSearch = () => {
-    navigate('/search')
+    navigate(NAV_ROUTES.SEARCH)
   }
 
   const handleSettings = () => {
-    navigate('/settings')
+    navigate(NAV_ROUTES.SETTINGS)
   }
 
   const handleProfile = () => {
-    navigate('/settings')
+    navigate(NAV_ROUTES.SETTINGS)
   }
 
   return (
@@ -130,25 +131,25 @@ const Header: React.FC = () => {
           <div className="lg:hidden border-t border-gray-200 py-2">
             <nav className="flex flex-col space-y-2">
               <button
-                onClick={() => navigate('/home')}
+                onClick={() => navigate(NAV_ROUTES.HOME)}
                 className="px-4 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-lg"
               >
                 我的行程
               </button>
               <button
-                onClick={() => navigate('/plan')}
+                onClick={() => navigate(NAV_ROUTES.AI_PLANNING)}
                 className="px-4 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-lg"
               >
                 AI规划
               </button>
               <button
-                onClick={() => navigate('/chat')}
+                onClick={() => navigate(NAV_ROUTES.CHAT)}
                 className="px-4 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-lg"
               >
                 智能聊天
               </button>
               <button
-                onClick={() => navigate('/search')}
+                onClick={() => navigate(NAV_ROUTES.SEARCH)}
                 className="px-4 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-lg"
               >
                 搜索

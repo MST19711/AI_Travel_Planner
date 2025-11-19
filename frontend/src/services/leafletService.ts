@@ -3,7 +3,113 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
 import L from 'leaflet';
 
-import {MapLocation, MapMarker} from '../types';
+import {ExtendedRoutePlanResult, MapLocation, MapMarker, TransitStep, TransportMode} from '../types';
+
+// 添加自定义CSS样式来调整导航信息窗口位置
+const customRoutingStyles = `
+  /* 调整导航信息窗口位置，避免遮挡地图中心 */
+  .leaflet-routing-container {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 300px !important;
+    max-height: 30vh !important; 
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+    z-index: 1000 !important;
+  }
+  
+  /* 直接调整路线说明列表（表格）的高度，而不是外层容器 */
+  .leaflet-routing-alt {
+    max-height: 30vh !important; /* 使用视口高度的30% */
+    min-height: 300px !important; /* 设置最小高度 */
+    overflow-y: auto !important;
+    font-size: 13px !important;
+    padding: 8px !important;
+    background: transparent !important;
+  }
+  
+  /* 修复最小化状态的显示问题 */
+  .leaflet-routing-alt-minimized {
+    max-height: 64px !important;
+    min-height: 64px !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  /* 确保最小化状态下的内容正确显示 */
+  .leaflet-routing-alt-minimized {
+    display: none !important;
+  }
+  
+  /* 确保内部table也被正确限制高度 */
+  .leaflet-routing-alt table {
+    max-height: 25vh !important; /* 继承父容器的高度限制 */
+    overflow-y: auto !important;
+    display: block !important; /* 确保表格可以正确应用高度限制 */
+  }
+  
+  /* 确保表格行可以正确显示 */
+  .leaflet-routing-alt tbody {
+    display: block !important;
+    max-height: calc(30vh - 65px) !important; /* 减去padding和其他元素的高度 */
+    overflow-y: auto !important;
+  }
+  
+  /* 调整路线说明容器样式 */
+  .leaflet-routing-itinerary {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    font-size: 13px !important;
+  }
+  
+  /* 调整路线说明表格样式 */
+  .leaflet-routing-itinerary table {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* 调整路线说明行样式 */
+  .leaflet-routing-itinerary tr {
+    border-bottom: 1px solid #eee !important;
+  }
+  
+  /* 调整路线说明单元格样式 */
+  .leaflet-routing-itinerary td {
+    padding: 4px 6px !important;
+    vertical-align: top !important;
+  }
+  
+  /* 调整弹出窗口样式，避免遮挡路线 */
+  .custom-popup {
+    margin-left: 20px !important;
+    margin-top: -50px !important;
+  }
+  
+  /* 调整路线标记样式 */
+  .leaflet-routing-geocoder {
+    display: none !important;
+  }
+`;
+
+// 注入自定义样式到页面
+const injectCustomStyles = () => {
+  if (document.getElementById('leaflet-routing-custom-styles')) {
+    return;  // 样式已存在
+  }
+
+  const styleElement = document.createElement('style');
+  styleElement.id = 'leaflet-routing-custom-styles';
+  styleElement.innerHTML = customRoutingStyles;
+  document.head.appendChild(styleElement);
+};
 
 // 动态导入leaflet-routing-machine，确保L已经定义
 let leafletRoutingMachine: any = null;
@@ -24,18 +130,6 @@ export interface PlaceSearchResult {
   distance?: number;
   city?: string;
   district?: string;
-}
-
-// 路线规划结果
-export interface RoutePlanResult {
-  status: 'success'|'error';
-  distance?: number;
-  time?: number;
-  tolls?: number;
-  price?: number;
-  steps?: any[];
-  segments?: any[];
-  message?: string;
 }
 
 // 修复Leaflet默认图标问题
@@ -93,6 +187,8 @@ class LeafletService {
   // 初始化服务
   async initialize(): Promise<boolean> {
     try {
+      // 注入自定义样式
+      injectCustomStyles();
       this.isInitialized = true;
       return true;
     } catch (error) {
@@ -269,14 +365,36 @@ class LeafletService {
                            ''}
           </div>
         `;
-        marker.bindPopup(popupContent);
+        // 设置弹出窗口偏移量和行为，避免遮挡路线
+        marker.bindPopup(popupContent, {
+          offset: L.point(30, -60),  // 向右偏移30像素，向上偏移60像素
+          autoPan: false,  // 禁用自动平移，避免地图移动导致路线被遮挡
+          closeOnClick: false,        // 点击其他地方不关闭弹出窗口
+          className: 'custom-popup',  // 添加自定义类名用于样式调整
+          minWidth: 200,              // 设置最小宽度
+          maxWidth: 250               // 设置最大宽度
+        });
       }
 
       // 添加点击事件
       if (isSelectable) {
         marker.on('click', () => {
-          // 自动打开弹出窗口
+          // 自动打开弹出窗口，但不移动地图中心
           marker.openPopup();
+
+          // 手动调整地图视图，让地点略微向左下移动一点
+          const map = this.mapInstance;
+          if (map) {
+            const currentCenter = map.getCenter();
+            const zoom = map.getZoom();
+            // 将地图中心向左下移动一点，让弹出窗口不遮挡路线
+            const offsetLat =
+                -0.002 * Math.pow(2, 15 - zoom);  // 根据缩放级别调整偏移
+            const offsetLng = 0.003 * Math.pow(2, 15 - zoom);
+            map.setView(
+                [currentCenter.lat + offsetLat, currentCenter.lng + offsetLng],
+                zoom, {animate: true, duration: 0.5});
+          }
         });
       }
 
@@ -361,9 +479,11 @@ class LeafletService {
     return this.selectedMarkers;
   }
 
-  // 规划驾车路线
-  async planDrivingRoute(waypoints: MapLocation[], showTraffic: boolean = true):
-      Promise<RoutePlanResult> {
+  // 规划路线 - 支持不同交通方式
+  async planRoute(
+      waypoints: MapLocation[],
+      transportMode: TransportMode = 'driving',
+      ): Promise<ExtendedRoutePlanResult> {
     if (!this.mapInstance) {
       throw new Error('地图未初始化');
     }
@@ -384,11 +504,22 @@ class LeafletService {
         throw new Error('地图未初始化');
       }
 
+      if (transportMode === 'transit') {
+        // 公共交通路线规划
+        return await this.planTransitRoute(
+            waypoints[0], waypoints[waypoints.length - 1]);
+      }
+
+      // 驾车、步行、骑行路线规划
+      const routeColor = transportMode === 'walking' ? '#4CAF50' :
+          transportMode === 'cycling'                ? '#FF9800' :
+                                                       '#3388ff';
+
       // 转换坐标格式 [lng, lat] -> [lat, lng]
       const latLngWaypoints =
           waypoints.map(point => L.latLng(point.lat, point.lng));
 
-      console.log('开始创建路线控制，途经点:', latLngWaypoints);
+      console.log(`开始创建${transportMode}路线控制，途经点:`, latLngWaypoints);
 
       // 创建路线控制 - 启用路线显示，修复显示问题
       this.routingControl =
@@ -397,11 +528,25 @@ class LeafletService {
               .control({
                 waypoints: latLngWaypoints,
                 lineOptions:
-                    {styles: [{color: '#3388ff', weight: 6, opacity: 0.8}]},
+                    {styles: [{color: routeColor, weight: 6, opacity: 0.8}]},
                 show: true,                 // 启用路线说明面板
                 addWaypoints: false,        // 不添加途经点标记
                 routeWhileDragging: false,  // 禁用拖拽时重新规划
-                fitSelectedRoutes: true,    // 自动缩放至路线范围
+                fitSelectedRoutes: false,  // 禁用自动缩放，避免地图视图被改变
+                createMarker: function(_i: any, waypoint: any, _n: any) {
+                  // 自定义标记，避免点击时地图中心移动
+                  const marker = L.marker(waypoint.latLng, {
+                    draggable: false,
+                    icon: L.divIcon({
+                      className: 'leaflet-routing-icon',
+                      html: `<div style="background-color: ${
+                          routeColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3);"></div>`,
+                      iconSize: [12, 12],
+                      iconAnchor: [6, 6]
+                    })
+                  });
+                  return marker;
+                },
                 router: (L as any).Routing.osrmv1(
                     {serviceUrl: 'https://router.project-osrm.org/route/v1'})
               })
@@ -431,11 +576,16 @@ class LeafletService {
               status: 'success',
               distance: summary.totalDistance,
               time: summary.totalTime,
-              steps: routes[0].waypoints
+              steps: routes[0].waypoints,
+              transportMode: transportMode
             });
           } else {
             console.warn('未找到路线');
-            resolve({status: 'error', message: '未找到路线'});
+            resolve({
+              status: 'error',
+              message: '未找到路线',
+              transportMode: transportMode
+            });
           }
         });
 
@@ -447,7 +597,8 @@ class LeafletService {
           console.error('路线规划错误:', e);
           resolve({
             status: 'error',
-            message: '路线规划失败: ' + (e.error?.message || '未知错误')
+            message: '路线规划失败: ' + (e.error?.message || '未知错误'),
+            transportMode: transportMode
           });
         });
 
@@ -457,30 +608,35 @@ class LeafletService {
           resolved = true;
 
           console.warn('路线规划超时');
-          resolve({status: 'error', message: '路线规划超时'});
+          resolve({
+            status: 'error',
+            message: '路线规划超时',
+            transportMode: transportMode
+          });
         }, 30000);
       });
     } catch (error) {
       console.error('路线规划失败:', error);
       return {
         status: 'error',
-        message: '路线规划失败: ' + (error as Error).message
+        message: '路线规划失败: ' + (error as Error).message,
+        transportMode: transportMode
       };
     }
   }
 
-  // 规划公交路线 - 简化实现，返回错误提示
+  // 规划公交路线 - 功能未完善
   async planTransitRoute(
-      start: MapLocation, end: MapLocation,
-      city: string = '北京'): Promise<RoutePlanResult> {
-    // Leaflet Routing Machine主要支持驾车路线规划
-    // 对于公交路线，可以集成其他API如OpenTripPlanner
-    // 这里暂时返回错误提示
+      start: MapLocation,
+      end: MapLocation,
+      ): Promise<ExtendedRoutePlanResult> {
     return {
       status: 'error',
-      message: '公交路线规划功能暂未实现，请使用驾车路线规划'
+      message: '公共交通路线规划功能正在开发中，请稍后使用',
+      transportMode: 'transit'
     };
   }
+
 
   // 设置地图中心点
   setCenter(lng: number, lat: number, zoom?: number): void {
@@ -533,7 +689,9 @@ class LeafletService {
       }
 
       // 清理瓦片图层引用
-      this.tileLayer = null;
+      if (this.tileLayer) {
+        this.tileLayer = null;
+      }
 
       // 最后销毁地图实例
       if (this.mapInstance) {

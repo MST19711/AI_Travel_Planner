@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Calendar, Users, DollarSign, MapPin, ArrowLeft, Loader, Clock, Trash2, Search } from 'lucide-react'
 import tripService from '../../services/tripService'
-import { leafletService, PlaceSearchResult, RoutePlanResult } from '../../services/leafletService'
+import { leafletService, PlaceSearchResult } from '../../services/leafletService'
 import MapComponent from '../../components/MapComponent'
-import { Trip, Activity, MapMarker, MapLocation } from '../../types'
+import { Trip, Activity, MapMarker, MapLocation, ExtendedRoutePlanResult, TransportMode } from '../../types'
 
 // 按天分组的活动类型
 interface DayGroup {
@@ -34,7 +34,8 @@ const TripLayoutPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<PlaceSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [isPlanningRoute, setIsPlanningRoute] = useState(false)
-  const [routeResult, setRouteResult] = useState<RoutePlanResult | null>(null)
+  const [routeResult, setRouteResult] = useState<ExtendedRoutePlanResult | null>(null)
+  const [transportMode, setTransportMode] = useState<TransportMode>('driving')
 
   useEffect(() => {
     const fetchTrip = async () => {
@@ -247,23 +248,15 @@ const TripLayoutPage: React.FC = () => {
     setDeleteConfirm({ show: false, tripId: null, tripTitle: '' })
   }
 
-  const handleClearAllLocations = () => {
-    setSelectedLocations([])
-    setRouteResult(null)
-    try {
-      leafletService.clearSelectedMarkers()
-    } catch (error) {
-      console.error('清除选中标记失败:', error)
-    }
-  }
 
-  const handleGenerateRoute = async (selectedLocationsForRoute?: MapMarker[]): Promise<RoutePlanResult> => {
+  const handleGenerateRoute = async (selectedLocationsForRoute?: MapMarker[], transportModeParam?: TransportMode): Promise<ExtendedRoutePlanResult> => {
     const locations = selectedLocationsForRoute || selectedLocations;
     
     if (locations.length < 2) {
-      const errorResult: RoutePlanResult = {
+      const errorResult: ExtendedRoutePlanResult = {
         status: 'error',
-        message: '请至少选择2个地点进行路线规划'
+        message: '请至少选择2个地点进行路线规划',
+        transportMode: transportModeParam || transportMode
       };
       alert('请至少选择2个地点进行路线规划');
       return errorResult;
@@ -277,7 +270,7 @@ const TripLayoutPage: React.FC = () => {
         lng: loc.lng,
         lat: loc.lat
       }))
-      const result = await leafletService.planDrivingRoute(waypoints)
+      const result = await leafletService.planRoute(waypoints, transportModeParam || transportMode)
       console.log('路线规划结果:', result)
       setRouteResult(result)
       
@@ -290,9 +283,10 @@ const TripLayoutPage: React.FC = () => {
       return result;
     } catch (error) {
       console.error('路线规划失败:', error)
-      const errorResult: RoutePlanResult = {
+      const errorResult: ExtendedRoutePlanResult = {
         status: 'error',
-        message: '路线规划失败: ' + (error as Error).message
+        message: '路线规划失败: ' + (error as Error).message,
+        transportMode: transportModeParam || transportMode
       };
       alert('路线规划失败，请重试')
       return errorResult;
@@ -474,29 +468,6 @@ const TripLayoutPage: React.FC = () => {
         console.error('地图跳转失败:', error);
       }
     }, 100);
-  }
-
-  // 清除所有
-  const handleClearAll = () => {
-    setSearchResults([])
-    setSelectedLocations([])
-    setRouteResult(null)
-    try {
-      leafletService.clearRoute()
-      leafletService.clearMarkers()
-      leafletService.clearSelectedMarkers()
-      
-      // 重新显示活动标记
-      if (selectedActivity) {
-        const location: MapLocation = {
-          lng: selectedActivity.longitude || 116.397428,
-          lat: selectedActivity.latitude || 39.90923
-        }
-        leafletService.addMarker(location, selectedActivity.title, selectedActivity.description || undefined, true)
-      }
-    } catch (error) {
-      console.error('清除所有标记失败:', error)
-    }
   }
 
   if (isLoading) {
@@ -823,9 +794,17 @@ const TripLayoutPage: React.FC = () => {
                             {routeResult.time && (
                               <div>时间: {Math.ceil(routeResult.time / 60)}分钟</div>
                             )}
-                            {routeResult.tolls && (
+                            {routeResult.transportMode === 'driving' && routeResult.tolls && (
                               <div>过路费: ¥{routeResult.tolls}</div>
                             )}
+                            {routeResult.transportMode === 'transit' && routeResult.totalFare && (
+                              <div>票价: ¥{routeResult.totalFare.toFixed(2)}</div>
+                            )}
+                            <div className="text-xs text-gray-500 mt-1">
+                              交通方式: {routeResult.transportMode === 'driving' ? '驾车' :
+                                           routeResult.transportMode === 'transit' ? '公共交通' :
+                                           routeResult.transportMode === 'walking' ? '步行' : '骑行'}
+                            </div>
                           </div>
                         )}
                         {routeResult.status === 'error' && (
@@ -836,6 +815,20 @@ const TripLayoutPage: React.FC = () => {
                     
                     {/* 导航操作按钮 */}
                     <div className="space-y-2 pt-3 border-t border-gray-200">
+                      {/* 交通方式选择器 */}
+                      <div className="flex items-center space-x-2">
+                        <label className="text-sm font-medium text-gray-700">交通方式:</label>
+                        <select
+                          value={transportMode}
+                          onChange={(e) => setTransportMode(e.target.value as TransportMode)}
+                          className="flex-1 px-2 py-1.5 border border-gray-300 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="driving">驾车</option>
+                          <option value="transit">公共交通</option>
+                          <option value="walking">步行</option>
+                          <option value="cycling">骑行</option>
+                        </select>
+                      </div>
                       <button
                         onClick={() => handleGenerateRoute()}
                         disabled={isPlanningRoute || selectedLocations.length < 2}

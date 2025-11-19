@@ -7,6 +7,7 @@ import {
   Settings,
   PlusCircle
 } from 'lucide-react'
+import { NAV_ROUTES } from '../config/routes'
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate()
@@ -15,31 +16,31 @@ const Sidebar: React.FC = () => {
   const menuItems = [
     {
       name: '我的行程',
-      path: '/home',
+      path: NAV_ROUTES.HOME,
       icon: Home,
       description: '查看和管理您的旅行计划'
     },
     {
       name: 'AI规划',
-      path: '/plan',
+      path: NAV_ROUTES.AI_PLANNING,
       icon: PlusCircle,
       description: '智能生成旅行计划'
     },
     {
       name: '智能聊天',
-      path: '/chat',
+      path: NAV_ROUTES.CHAT,
       icon: MessageSquare,
       description: '与AI助手对话获取建议'
     },
     {
       name: '搜索',
-      path: '/search',
+      path: NAV_ROUTES.SEARCH,
       icon: Search,
       description: '搜索目的地和景点信息'
     },
     {
       name: '设置',
-      path: '/settings',
+      path: NAV_ROUTES.SETTINGS,
       icon: Settings,
       description: '管理账户和API配置'
     }
@@ -98,7 +99,7 @@ const Sidebar: React.FC = () => {
           
           <div className="space-y-2">
             <button
-              onClick={() => navigate('/plan')}
+              onClick={() => navigate(NAV_ROUTES.AI_PLANNING)}
               className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
             >
               <PlusCircle size={18} />
@@ -106,7 +107,7 @@ const Sidebar: React.FC = () => {
             </button>
             
             <button
-              onClick={() => navigate('/search')}
+              onClick={() => navigate(NAV_ROUTES.SEARCH)}
               className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
             >
               <Search size={18} />

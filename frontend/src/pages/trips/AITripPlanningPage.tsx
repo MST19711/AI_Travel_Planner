@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
 import { userService } from '../../services/userService'
 import { llmService } from '../../services/llmService'
 import { LLMConfig, AIPlanningState, LLMStreamResponse, Trip } from '../../types'
 import { tripService } from '../../services/tripService'
+import { NAV_ROUTES } from '../../config/routes'
+import SpeechInput from '../../components/SpeechInput'
 
 const AITripPlanningPage: React.FC = () => {
   const { user: _user } = useAuthStore()
@@ -181,7 +184,7 @@ const AITripPlanningPage: React.FC = () => {
         {!llmConfig && (
           <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-yellow-700">
-              请先前往 <a href="/settings/api-keys" className="underline">设置页面</a> 配置LLM API密钥
+              请先前往 <Link to={NAV_ROUTES.API_KEYS} className="underline">设置页面</Link> 配置LLM API密钥
             </p>
           </div>
         )}
@@ -193,11 +196,21 @@ const AITripPlanningPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 旅行需求描述
               </label>
+              
+              {/* 语音输入组件 */}
+              <SpeechInput
+                onTextChange={setUserInput}
+                placeholder="例如：我想去日本东京，5天行程，预算5000元，喜欢美食和购物，2人同行"
+                disabled={planningState.isGenerating}
+                className="mb-4"
+              />
+              
+              {/* 文本输入框作为备选 */}
               <textarea
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                placeholder="例如：我想去日本东京，5天行程，预算5000元，喜欢美食和购物，2人同行"
-                rows={8}
+                placeholder="或者直接输入旅行需求..."
+                rows={6}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 disabled={planningState.isGenerating}
               />
@@ -296,6 +309,8 @@ const AITripPlanningPage: React.FC = () => {
           <h4 className="font-semibold text-blue-900 mb-2">使用说明：</h4>
           <ul className="text-blue-700 text-sm space-y-1">
             <li>• 详细描述您的旅行需求，包括目的地、天数、预算、人数和偏好</li>
+            <li>• 可以使用语音输入功能快速输入需求（需配置讯飞语音API）</li>
+            <li>• 也可以直接使用文本输入框输入旅行需求</li>
             <li>• AI将根据您的需求生成详细的行程计划</li>
             <li>• 如果JSON解析失败，系统会自动重试最多3次</li>
             <li>• 生成完成后，请检查预览内容，满意后点击"保存行程"按钮</li>

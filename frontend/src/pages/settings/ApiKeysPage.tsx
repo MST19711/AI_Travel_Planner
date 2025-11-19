@@ -127,6 +127,9 @@ const ApiKeysPage: React.FC = () => {
               <p className="text-blue-800 mt-2">
                 无需配置任何API密钥即可使用地图的完整功能，包括地点搜索、标记和路线规划。
               </p>
+              <p className="text-blue-800 mt-2">
+                <strong>注意：</strong>公共交通路线规划功能正在开发中，目前暂不可用。
+              </p>
             </div>
           </div>
 

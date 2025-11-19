@@ -11,6 +11,7 @@ import SettingsPage from './pages/settings/SettingsPage'
 import ApiKeysPage from './pages/settings/ApiKeysPage'
 import ChatPage from './pages/chat/ChatPage'
 import SearchPage from './pages/search/SearchPage'
+import { ROUTES } from './config/routes'
 
 function App() {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore()
@@ -51,23 +52,23 @@ function App() {
     <Router>
       <Routes>
         {/* 公开路由 */}
-        <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/home" />} />
-        <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/home" />} />
+        <Route path={ROUTES.LOGIN} element={!isAuthenticated ? <LoginPage /> : <Navigate to={ROUTES.HOME} />} />
+        <Route path={ROUTES.REGISTER} element={!isAuthenticated ? <RegisterPage /> : <Navigate to={ROUTES.HOME} />} />
         
         {/* 受保护路由 */}
-        <Route path="/" element={isAuthenticated ? <Layout /> : <Navigate to="/login" />}>
-          <Route index element={<Navigate to="/home" />} />
-          <Route path="home" element={<HomePage />} />
-          <Route path="trips/:id" element={<TripLayoutPage />} />
-          <Route path="plan" element={<AITripPlanningPage />} />
-          <Route path="chat" element={<ChatPage />} />
-          <Route path="search" element={<SearchPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="settings/api-keys" element={<ApiKeysPage />} />
+        <Route path={ROUTES.DEFAULT} element={isAuthenticated ? <Layout /> : <Navigate to={ROUTES.LOGIN} />}>
+          <Route index element={<Navigate to={ROUTES.HOME} />} />
+          <Route path={ROUTES.HOME} element={<HomePage />} />
+          <Route path={ROUTES.TRIP_DETAIL} element={<TripLayoutPage />} />
+          <Route path={ROUTES.AI_PLANNING} element={<AITripPlanningPage />} />
+          <Route path={ROUTES.CHAT} element={<ChatPage />} />
+          <Route path={ROUTES.SEARCH} element={<SearchPage />} />
+          <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+          <Route path={ROUTES.API_KEYS} element={<ApiKeysPage />} />
         </Route>
         
         {/* 默认重定向 */}
-        <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
+        <Route path={ROUTES.WILDCARD} element={<Navigate to={isAuthenticated ? ROUTES.HOME : ROUTES.LOGIN} />} />
       </Routes>
     </Router>
   )

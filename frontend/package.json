@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:prod": "tsc && vite build --mode production",
     "preview": "vite preview",
+    "preview:prod": "vite preview --mode production",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "serve": "vite preview --host 0.0.0.0 --port 3000"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.21",
@@ -24,7 +27,9 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/leaflet-routing-machine": "^3.2.9",
+    "@types/node": "^24.10.1",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.10.0",

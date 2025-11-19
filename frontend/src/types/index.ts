@@ -236,3 +236,42 @@ export interface MapMarker {
   description?: string
   isSelectable?: boolean
 }
+
+// 路线规划结果
+export interface RoutePlanResult {
+  status: 'success'|'error';
+  distance?: number;
+  time?: number;
+  tolls?: number;
+  price?: number;
+  steps?: any[];
+  segments?: any[];
+  message?: string;
+}
+
+// 交通方式类型
+export type TransportMode = 'driving'|'transit'|'walking'|'cycling';
+
+// 扩展的路线规划结果，支持不同交通方式
+export interface ExtendedRoutePlanResult extends RoutePlanResult {
+  transportMode: TransportMode;
+  // 公共交通特有字段
+  transitSteps?: TransitStep[];
+  totalFare?: number;
+  // 驾车特有字段
+  tolls?: number;
+  traffic?: string;
+}
+
+// 公共交通步骤
+export interface TransitStep {
+  mode: 'walking'|'bus'|'subway'|'train'|'tram'|'ferry';
+  from: {name: string; lat: number; lng: number;};
+  to: {name: string; lat: number; lng: number;};
+  duration: number;    // 秒
+  distance: number;    // 米
+  routeName?: string;  // 线路名称
+  departureTime?: string;
+  arrivalTime?: string;
+  fare?: number;
+}

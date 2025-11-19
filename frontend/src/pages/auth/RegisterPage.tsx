@@ -62,6 +62,9 @@ const RegisterPage: React.FC = () => {
         }
       })
     } catch (err: any) {
+      // 错误信息已经在authService的响应拦截器中处理过
+      console.log('RegisterPage捕获到错误:', err)
+      console.log('错误消息:', err.message)
       setError(err.message || '注册失败，请稍后重试')
     } finally {
       setIsLoading(false)

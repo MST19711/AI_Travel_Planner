@@ -28,9 +28,9 @@ class User(Base):
     username = Column(String(50), unique=True, index=True, nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
 
-    # SRP认证相关字段（必需）
-    srp_salt = Column(Text, nullable=False)  # SRP盐值 (Base64编码)
-    srp_verifier = Column(Text, nullable=False)  # SRP验证器（Base64编码的大整数）
+    # SRP认证相关字段（可选，用于SRP认证）
+    srp_salt = Column(Text, nullable=True)  # SRP盐值 (Base64编码)
+    srp_verifier = Column(Text, nullable=True)  # SRP验证器（Base64编码的大整数）
 
     # 不安全密码传输相关字段（可选）
     insecure_password_hash = Column(String(64), nullable=True)  # 密码hash (SHA256)

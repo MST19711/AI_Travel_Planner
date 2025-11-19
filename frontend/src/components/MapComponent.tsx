@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { leafletService, PlaceSearchResult, RoutePlanResult } from '../services/leafletService'
-import { MapMarker, MapLocation, Activity } from '../types'
+import { leafletService, PlaceSearchResult } from '../services/leafletService'
+import { MapMarker, MapLocation, Activity, ExtendedRoutePlanResult, TransportMode } from '../types'
 
 interface MapComponentProps {
   containerId: string
   activities?: Activity[]
   selectedActivity?: Activity | null
   externalSelectedLocations?: MapMarker[]  // 新增：外部传入的已选择地点列表
-  externalRouteResult?: RoutePlanResult | null  // 新增：外部传入的路线规划结果
+  externalRouteResult?: ExtendedRoutePlanResult | null  // 新增：外部传入的路线规划结果
   onLocationSelected?: (marker: MapMarker) => void
-  onRoutePlanned?: (result: RoutePlanResult) => void
-  onRequestRoutePlan?: (selectedLocations: MapMarker[]) => Promise<RoutePlanResult>  // 新增：外部请求路线规划的回调
+  onRoutePlanned?: (result: ExtendedRoutePlanResult) => void
+  onRequestRoutePlan?: (selectedLocations: MapMarker[], transportMode?: TransportMode) => Promise<ExtendedRoutePlanResult>  // 新增：外部请求路线规划的回调
   height?: string
   showControls?: boolean
   countryCode?: string | null  // 新增：国家代码，用于设置地图默认中心
@@ -36,7 +36,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const [selectedLocations, setSelectedLocations] = useState<MapMarker[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [isPlanningRoute, setIsPlanningRoute] = useState(false)
-  const [routeResult, setRouteResult] = useState<RoutePlanResult | null>(null)
+  const [routeResult, setRouteResult] = useState<ExtendedRoutePlanResult | null>(null)
+  const [transportMode, setTransportMode] = useState<TransportMode>('driving')
   const [containerReady, setContainerReady] = useState(false)
 
   // 使用ref来跟踪地图实例，避免重复初始化
@@ -325,14 +326,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
     setIsPlanningRoute(true)
     try {
-      let result: RoutePlanResult;
+      let result: ExtendedRoutePlanResult;
       
       // 如果有外部路线规划回调，使用外部回调
       if (onRequestRoutePlan) {
-        result = await onRequestRoutePlan(selectedLocations);
+        result = await onRequestRoutePlan(selectedLocations, transportMode);
       } else {
         // 否则使用内部的leafletService
-        result = await leafletService.planDrivingRoute(selectedLocations);
+        result = await leafletService.planRoute(selectedLocations, transportMode);
       }
       
       // 更新路线结果状态，但保持地图当前状态
@@ -449,6 +450,17 @@ const MapComponent: React.FC<MapComponentProps> = ({
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-medium text-blue-900">已选择的地点 ({selectedLocations.length})</h4>
                 <div className="flex space-x-2">
+                  {/* 交通方式选择器 */}
+                  <select
+                    value={transportMode}
+                    onChange={(e) => setTransportMode(e.target.value as TransportMode)}
+                    className="px-2 py-1 border border-gray-300 text-sm rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="driving">驾车</option>
+                    <option value="transit">公共交通</option>
+                    <option value="walking">步行</option>
+                    <option value="cycling">骑行</option>
+                  </select>
                   <button
                     onClick={handlePlanRoute}
                     disabled={isPlanningRoute || selectedLocations.length < 2}
@@ -494,9 +506,17 @@ const MapComponent: React.FC<MapComponentProps> = ({
                   {routeResult.time && (
                     <div>时间: {Math.ceil(routeResult.time / 60)}分钟</div>
                   )}
-                  {routeResult.tolls && (
+                  {routeResult.transportMode === 'driving' && routeResult.tolls && (
                     <div>过路费: ¥{routeResult.tolls}</div>
                   )}
+                  {routeResult.transportMode === 'transit' && routeResult.totalFare && (
+                    <div>票价: ¥{routeResult.totalFare.toFixed(2)}</div>
+                  )}
+                  <div className="text-xs text-gray-500 mt-1">
+                    交通方式: {routeResult.transportMode === 'driving' ? '驾车' :
+                             routeResult.transportMode === 'transit' ? '公共交通' :
+                             routeResult.transportMode === 'walking' ? '步行' : '骑行'}
+                  </div>
                 </div>
               )}
               {routeResult.status === 'error' && (
